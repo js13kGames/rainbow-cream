@@ -117,10 +117,11 @@ export class Board {
     }
 
     click(x, y, isPaused) {
+        this.boardTiles.forEach(row => row.forEach(tile => tile.click(x, y)));
     }
 
     update(x, y) {
-        this.boardTiles.forEach(row => row.forEach(tile => tile.update(x, y)))
+        this.boardTiles.forEach(row => row.forEach(tile => tile.update(x, y)));
     }
 
     updateZoom() {

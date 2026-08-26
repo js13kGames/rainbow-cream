@@ -17,6 +17,8 @@ export class Tile {
         this.ctx = ctx;
 
         this.collisionObj = this.createCollisionBox();
+
+        this.gameDiv = document.getElementById("game");
     }
 
     createCollisionBox() {
@@ -29,9 +31,15 @@ export class Tile {
     }
 
     click(x, y) {
-        this.isSelected = !!this.character && this.character.isPlayer && this.collisionObj.isInsideRect(x, y);
+        this.isSelected = this.collisionObj.isInsideRect(x, y);
+        this.isSelected && this.createInteractionBallon();
+        !this.isSelected && this.destroyInteractionBallon();
         return this.isSelected;
     }
+
+    createInteractionBallon() { }
+
+    destroyInteractionBallon() { }
 
     canMoveTo(x, y) {
         return this.isSelected && this.collisionObj.isInsideRect(x, y);
@@ -44,6 +52,10 @@ export class Tile {
 
     updateZoom() {
         this.collisionObj = this.createCollisionBox();
+        if (this.isSelected) {
+            this.destroyInteractionBallon();
+            this.createInteractionBallon();
+        }
     }
 
     update(x, y) {
@@ -52,7 +64,10 @@ export class Tile {
 
     updatePos(x, y) {
         this.collisionObj.updatePos(x, y);
+        this.updateInteractiveBallonPos();
     }
+
+    updateInteractiveBallonPos() { }
 
     drawBack() {
     }

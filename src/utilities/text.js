@@ -87,6 +87,8 @@ const retrievePixelLetter = (letter) => {
 
         case '!':
             return excl;
+        case '$':
+            return dollar;
         case '+':
             return plus;
         case '/':
@@ -346,6 +348,14 @@ const excl = [
     [true, false],
     [false, false],
     [true, false]
+];
+
+const dollar = [
+    [false, true, true, true, false],
+    [true, false, false, false, true],
+    [true, false, true, false, true],
+    [true, false, false, false, true],
+    [false, true, true, true, false]
 ];
 
 const plus = [
