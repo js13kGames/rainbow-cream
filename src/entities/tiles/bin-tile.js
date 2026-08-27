@@ -10,15 +10,12 @@ import { SelectionArrow } from "../selection-arrow";
 import { Tile } from "./tile";
 
 export class BinTile extends Tile {
-    // constructor(boardX, boardY, ctx) {
-    //     super(boardX, boardY, ctx);
-    //     this.createInteractionBallon();
-    // }
-
     createInteractionBallon() {
         if (!this.interactionBallon) {
             this.interactionBallon = createElem(this.gameDiv, "canvas", null, null, toBoardPixelSize(56), toBoardPixelSize(12), GameVars.isMobile, null, () => {
-                console.log("dispose waste");
+                GameVars.game.board.player.moveToBoardPos(this.boardX - 1, this.boardY);
+                GameVars.game.board.player.cleanOrder();
+                this.destroyInteractionBallon();
             });
 
             this.updateInteractiveBallonPos();

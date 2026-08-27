@@ -1,31 +1,44 @@
+import { ColorType, getRangeColor } from "../../enum/color-type";
 import { TileType } from "../../enum/tile-type";
 import { GameVars, toBoardPixelSize, toPixelSize } from "../../game-variables";
 import { ConesMachine } from "../../sprites/tile-sprites";
 import { genSmallBox } from "../../utilities/box-generator";
 import { drawBalcony, drawSprite } from "../../utilities/draw-utilities";
 import { createElem } from "../../utilities/elem-utilities";
+import { clamp } from "../../utilities/general-utilities";
 import { drawPixelTextInCanvas } from "../../utilities/text";
 import { Rectangle } from "../rectangle";
 import { SelectionArrow } from "../selection-arrow";
 import { Tile } from "./tile";
 
 export class ConeMachine extends Tile {
-    // constructor(boardX, boardY, ctx) {
-    //     super(boardX, boardY, ctx);
-    //     this.createInteractionBallon();
-    // }
+    constructor(boardX, boardY, ctx) {
+        super(boardX, boardY, ctx);
+        this.flourAmount = 100;
+    }
 
     createInteractionBallon() {
         if (!this.takeCone) {
             this.buyFlour = createElem(this.gameDiv, "canvas", null, null, toBoardPixelSize(62), toBoardPixelSize(10), GameVars.isMobile, null, () => {
-                console.log("buy flour");
+                GameVars.game.board.player.moveToBoardPos(this.boardX, this.boardY + 1);
+                GameVars.game.pay(this.flourPrice());
+                this.flourAmount = 100;
             });
             const buyFlourCtx = this.buyFlour.getContext("2d");
             genSmallBox(buyFlourCtx, 0, 0, 60, 9, toBoardPixelSize(1), "#000000", "#ffffff");
-            drawPixelTextInCanvas("buy flour $-69", buyFlourCtx, toBoardPixelSize(1), 31, 5, "#000000", 1);
+            drawPixelTextInCanvas("add flour $-" + this.flourPrice(), buyFlourCtx, toBoardPixelSize(1), 31, 5, "#000000", 1);
 
             this.takeCone = createElem(this.gameDiv, "canvas", null, null, toBoardPixelSize(44), toBoardPixelSize(12), GameVars.isMobile, null, () => {
-                console.log("take cone");
+                const player = GameVars.game.board.player;
+                player.moveToBoardPos(this.boardX, this.boardY + 1);
+                if (!player.hasCone && this.flourAmount > 0) {
+                    this.flourAmount = clamp(this.flourAmount - 10, 0, 100);
+                    player.collectCone();
+                    this.destroyInteractionBallon();
+                    if (GameVars.game.isTutorial) {
+                        GameVars.game.board.iceCreamMachine[ColorType.BLUE].createInteractionBallon();
+                    }
+                }
             });
 
             this.updateInteractiveBallonPos();
@@ -35,6 +48,11 @@ export class ConeMachine extends Tile {
             drawPixelTextInCanvas("take cone", takeConeCtx, toBoardPixelSize(1), 21, 5, "#000000", 1);
             genSmallBox(takeConeCtx, 40, 8, 3, 3, toBoardPixelSize(1), "#000000", "#ffffff");
         }
+    }
+
+    flourPrice() {
+        const flourPerc = (100 - this.flourAmount) / 100
+        return GameVars.game.flourCost * flourPerc;
     }
 
     destroyInteractionBallon() {
@@ -61,12 +79,20 @@ export class ConeMachine extends Tile {
         drawSprite(this.ctx, ConesMachine,
             toBoardPixelSize(1),
             (this.boardX * GameVars.tileSize) + 1,
-            ((this.boardY - 1) * GameVars.tileSize),
-            {
-                "lc1": "#00bcd4", "dc1": "#10495e",
-                "lc2": "#ffff57", "dc2": "#cd9722",
-                "lc3": "#a80000", "dc3": "#641f14",
-            }
+            ((this.boardY - 1) * GameVars.tileSize)
+        );
+
+        genSmallBox(this.ctx,
+            (this.boardX * GameVars.tileSize) + 1,
+            (this.boardY * GameVars.tileSize) - 20,
+            13, 3,
+            toBoardPixelSize(1), "#000000", "#1b1116");
+
+        this.ctx.fillStyle = getRangeColor(this.flourAmount);
+        this.ctx.fillRect(
+            toBoardPixelSize((this.boardX * GameVars.tileSize) + 2),
+            toBoardPixelSize((this.boardY * GameVars.tileSize) - 19),
+            toBoardPixelSize((12 * this.flourAmount) / 100), toBoardPixelSize(2)
         );
     }
 }

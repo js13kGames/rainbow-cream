@@ -14,6 +14,9 @@ let gameBoardDiv;
 
 let game;
 
+let secondsPassed;
+let oldTimeStamp = 0;
+
 const init = () => {
     GameVars.updatePixelSize(window.innerWidth, window.innerHeight);
 
@@ -36,10 +39,17 @@ const initHandlers = () => {
     gameBoardDiv.ontouchstart = (e) => game.click(e.touches[0].clientX, e.touches[0].clientY);
 }
 
-const gameLoop = () => {
-    game.update();
-    game.draw();
-    window.requestAnimationFrame(() => gameLoop());
+const gameLoop = (timeStamp) => {
+    secondsPassed = (timeStamp - oldTimeStamp) / 1000;
+    oldTimeStamp = timeStamp;
+    GameVars.deltaTime = Math.min(secondsPassed, 0.1);
+
+    if (GameVars.deltaTime) {
+        game.update();
+        game.draw();
+    }
+
+    window.requestAnimationFrame(gameLoop);
 }
 
 init();

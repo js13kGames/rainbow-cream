@@ -58,7 +58,9 @@ export class Tile {
         }
     }
 
-    update(x, y) {
+    update() { }
+
+    updateHighlight(x, y) {
         this.isHighlight = this.collisionObj.isInsideRect(x, y);
     }
 

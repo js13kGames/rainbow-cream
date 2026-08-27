@@ -1,9 +1,12 @@
+import { ColorType, getDarkColorByType, getLightColorByType } from "../enum/color-type";
 import { TileType } from "../enum/tile-type";
 import { GameVars, removeBoardPixelSize, toBoardPixelSize, toPixelSize } from "../game-variables";
 import { Bin, Cashier, Character, Cone, ConeMachine, ConeWithStep1, ConeWithStep2, ConeWithStep3, Unicorn } from "../sprites/tile-sprites";
 import { createPixelLine, drawSprite } from "../utilities/draw-utilities";
 import { createElem, setElemSize } from "../utilities/elem-utilities";
 import { generateTile } from "../utilities/tile-factory";
+import { Customer } from "./customer";
+import { Player } from "./player";
 import { Grass } from "./tiles/grass";
 
 export class Board {
@@ -28,11 +31,12 @@ export class Board {
         this.boardTiles = this.createGameBoardTiles();
 
         this.initBasicGameComponents();
+        this.customers = [new Customer(6, 10, this.boardCtx)];
+
+        this.player = new Player(6, 8, this.boardCtx);
 
         this.resetBoardPos();
         this.dragElement(this);
-
-        this.selectedCharacter = null;
     }
 
     createBackground() {
@@ -74,6 +78,11 @@ export class Board {
     }
 
     initBasicGameComponents() {
+        this.cachiers = [];
+        this.balconies = [];
+        this.coneMachines = [];
+        this.iceCreamMachine = {};
+
         const startY = (this.boardTiles.length / 2) - 4;
         const startX = (this.boardTiles[0].length / 2) - 3;
         for (let y = startY; y < this.boardTiles.length; y++) {
@@ -82,21 +91,27 @@ export class Board {
                     this.boardTiles[y][x] = generateTile(x + 1, y + 1, TileType.WALL, this.boardCtx);
                 } else if (y == startY + 1 && x == startX + 1) {
                     this.boardTiles[y][x] = generateTile(x + 1, y + 1, TileType.CONE_MACHINE, this.boardCtx);
+                    this.coneMachines.push(this.boardTiles[y][x]);
                 } else if (y == startY + 1 && x == startX + 2) {
                     this.boardTiles[y][x] = generateTile(x + 1, y + 1, TileType.ICE_CREAM_MACHINE, this.boardCtx);
-                    this.boardTiles[y][x].setCreamColor("#00bcd4", "#10495e");
+                    this.boardTiles[y][x].setCreamColor(ColorType.BLUE);
+                    this.iceCreamMachine[ColorType.BLUE] = this.boardTiles[y][x];
                 } else if (y == startY + 1 && x == startX + 3) {
                     this.boardTiles[y][x] = generateTile(x + 1, y + 1, TileType.ICE_CREAM_MACHINE, this.boardCtx);
-                    this.boardTiles[y][x].setCreamColor("#ffff57", "#cd9722");
+                    this.boardTiles[y][x].setCreamColor(ColorType.YELLOW);
+                    this.iceCreamMachine[ColorType.YELLOW] = this.boardTiles[y][x];
                 } else if (y == startY + 1 && x == startX + 4) {
                     this.boardTiles[y][x] = generateTile(x + 1, y + 1, TileType.ICE_CREAM_MACHINE, this.boardCtx);
-                    this.boardTiles[y][x].setCreamColor("#a80000", "#641f14");
+                    this.boardTiles[y][x].setCreamColor(ColorType.RED);
+                    this.iceCreamMachine[ColorType.RED] = this.boardTiles[y][x];
                 } else if (y == startY + 3 && x == startX + 4) {
                     this.boardTiles[y][x] = generateTile(x + 1, y + 1, TileType.BIN, this.boardCtx);
                 } else if (y == startY + 5 && x == startX + 1) {
                     this.boardTiles[y][x] = generateTile(x + 1, y + 1, TileType.CASHIER, this.boardCtx);
+                    this.cachiers.push(this.boardTiles[y][x]);
                 } else if (y == startY + 5 && x >= startX + 2 && x <= startX + 4) {
                     this.boardTiles[y][x] = generateTile(x + 1, y + 1, TileType.BALCONY, this.boardCtx);
+                    this.balconies.push(this.boardTiles[y][x]);
                 } else {
                     this.boardTiles[y][x] = generateTile(x + 1, y + 1, TileType.FLOOR, this.boardCtx);
                 }
@@ -120,8 +135,8 @@ export class Board {
         this.boardTiles.forEach(row => row.forEach(tile => tile.click(x, y)));
     }
 
-    update(x, y) {
-        this.boardTiles.forEach(row => row.forEach(tile => tile.update(x, y)));
+    mov(x, y) {
+        this.boardTiles.forEach(row => row.forEach(tile => tile.updateHighlight(x, y)));
     }
 
     updateZoom() {
@@ -140,6 +155,15 @@ export class Board {
         return value * toBoardPixelSize(1) / this.lastPixelSize;
     }
 
+    update() {
+        this.cachiers.forEach(c => c.update());
+        this.balconies.forEach(b => b.update());
+        for (let key in this.iceCreamMachine) {
+            this.iceCreamMachine[key].update();
+        }
+        this.customers.forEach(c => c.update());
+    }
+
     draw() {
         this.boardCtx.clearRect(0, 0, this.boardCanvas.width, this.boardCanvas.height);
         for (let y = 0; y < this.boardTiles.length; y++) {
@@ -147,7 +171,9 @@ export class Board {
                 this.boardTiles[y][x].drawBack();
                 this.boardTiles[y][x].drawMiddle();
             }
+            if (y == this.player.boardY - 1) this.player.draw();
         }
+        this.customers.forEach(c => c.draw());
     }
 
     dragElement(board) {

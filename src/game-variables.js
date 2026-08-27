@@ -27,6 +27,11 @@ const pixelCal = (min, max) => {
     return pixelSize >= 1 ? pixelSize : 1;
 };
 
+let game;
+let deltaTime;
+
+let playerMoney;
+
 let lastGameW;
 let lastGameH;
 
@@ -41,6 +46,11 @@ let gameHgAsPixels;
 
 export const GameVars = {
     isMobile,
+
+    game,
+    deltaTime,
+
+    playerMoney,
 
     lastGameW,
     lastGameH,
