@@ -19,6 +19,15 @@ export class IceCreamMachine extends Tile {
         this.productionTimer = 0;
     }
 
+    createCollisionBox() {
+        return new Rectangle(
+            toBoardPixelSize(this.boardX * GameVars.tileSize),
+            toBoardPixelSize((this.boardY - 1) * GameVars.tileSize),
+            toBoardPixelSize(GameVars.tileSize),
+            toBoardPixelSize(32)
+        );
+    }
+
     setCreamColor(color) {
         this.iceCreamColor = color;
     }
@@ -79,8 +88,8 @@ export class IceCreamMachine extends Tile {
 
     updateInteractiveBallonPos() {
         if (this.takeIcecream) {
-            this.feedGrain.style.translate = (this.collisionObj.x - toBoardPixelSize(61)) + 'px ' + (this.collisionObj.y - toBoardPixelSize(25)) + 'px';
-            this.takeIcecream.style.translate = (this.collisionObj.x - toBoardPixelSize(54)) + 'px ' + (this.collisionObj.y - toBoardPixelSize(16)) + 'px';
+            this.feedGrain.style.translate = (this.collisionObj.x - toBoardPixelSize(61)) + 'px ' + (this.collisionObj.y + toBoardPixelSize(8) - toBoardPixelSize(25)) + 'px';
+            this.takeIcecream.style.translate = (this.collisionObj.x - toBoardPixelSize(54)) + 'px ' + (this.collisionObj.y + toBoardPixelSize(8) - toBoardPixelSize(16)) + 'px';
         }
     }
 
@@ -102,7 +111,7 @@ export class IceCreamMachine extends Tile {
 
     drawBack() {
         drawBalcony(this.ctx,
-            this.boardX, this.boardY, this.collisionObj.width, this.collisionObj.height,
+            this.boardX, this.boardY, toBoardPixelSize(16), toBoardPixelSize(16),
             "#999a9e", "#3e3846", "#686b7a"
         );
         drawSprite(this.ctx, Unicorn,
@@ -139,6 +148,16 @@ export class IceCreamMachine extends Tile {
             toBoardPixelSize((this.boardX * GameVars.tileSize) + 2),
             toBoardPixelSize((this.boardY * GameVars.tileSize) - 19),
             toBoardPixelSize((12 * this.iceCreamAmount) / 100), toBoardPixelSize(2)
+        );
+    }
+
+    drawHighlight(color) {
+        this.ctx.fillStyle = color + "66";
+        this.ctx.fillRect(
+            toBoardPixelSize(this.boardX * GameVars.tileSize),
+            toBoardPixelSize(this.boardY * GameVars.tileSize),
+            toBoardPixelSize(GameVars.tileSize),
+            toBoardPixelSize(GameVars.tileSize)
         );
     }
 }

@@ -17,6 +17,15 @@ export class ConeMachine extends Tile {
         this.flourAmount = 100;
     }
 
+    createCollisionBox() {
+        return new Rectangle(
+            toBoardPixelSize(this.boardX * GameVars.tileSize),
+            toBoardPixelSize((this.boardY - 1) * GameVars.tileSize),
+            toBoardPixelSize(GameVars.tileSize),
+            toBoardPixelSize(32)
+        );
+    }
+
     createInteractionBallon() {
         const player = GameVars.game.board.player;
         player.moveToBoardPos(this.boardX, this.boardY + 1);
@@ -66,14 +75,14 @@ export class ConeMachine extends Tile {
 
     updateInteractiveBallonPos() {
         if (this.takeCone) {
-            this.buyFlour.style.translate = (this.collisionObj.x - toBoardPixelSize(61)) + 'px ' + (this.collisionObj.y - toBoardPixelSize(23)) + 'px';
-            this.takeCone.style.translate = (this.collisionObj.x - toBoardPixelSize(42)) + 'px ' + (this.collisionObj.y - toBoardPixelSize(14)) + 'px';
+            this.buyFlour.style.translate = (this.collisionObj.x - toBoardPixelSize(61)) + 'px ' + (this.collisionObj.y + toBoardPixelSize(8) - toBoardPixelSize(23)) + 'px';
+            this.takeCone.style.translate = (this.collisionObj.x - toBoardPixelSize(42)) + 'px ' + (this.collisionObj.y + toBoardPixelSize(8) - toBoardPixelSize(14)) + 'px';
         }
     }
 
     drawBack() {
         drawBalcony(this.ctx,
-            this.boardX, this.boardY, this.collisionObj.width, this.collisionObj.height,
+            this.boardX, this.boardY, toBoardPixelSize(16), toBoardPixelSize(16),
             "#999a9e", "#3e3846", "#686b7a"
         );
         drawSprite(this.ctx, ConesMachine,
@@ -93,6 +102,16 @@ export class ConeMachine extends Tile {
             toBoardPixelSize((this.boardX * GameVars.tileSize) + 2),
             toBoardPixelSize((this.boardY * GameVars.tileSize) - 19),
             toBoardPixelSize((12 * this.flourAmount) / 100), toBoardPixelSize(2)
+        );
+    }
+
+    drawHighlight(color) {
+        this.ctx.fillStyle = color + "66";
+        this.ctx.fillRect(
+            toBoardPixelSize(this.boardX * GameVars.tileSize),
+            toBoardPixelSize(this.boardY * GameVars.tileSize),
+            toBoardPixelSize(GameVars.tileSize),
+            toBoardPixelSize(GameVars.tileSize)
         );
     }
 }

@@ -16,6 +16,15 @@ export class Balcony extends Tile {
         this.customer = null;
     }
 
+    createCollisionBox() {
+        return new Rectangle(
+            toBoardPixelSize(this.boardX * GameVars.tileSize),
+            toBoardPixelSize((this.boardY - 1) * GameVars.tileSize),
+            toBoardPixelSize(GameVars.tileSize),
+            toBoardPixelSize(32)
+        );
+    }
+
     createInteractionBallon() {
         const player = GameVars.game.board.player;
         player.moveToBoardPos(this.boardX, this.boardY - 1);
@@ -63,7 +72,7 @@ export class Balcony extends Tile {
 
     updateInteractiveBallonPos() {
         this.interactionBallon && (this.interactionBallon.style.translate = (this.collisionObj.x - toBoardPixelSize(51)) + 'px ' +
-            (this.collisionObj.y - toBoardPixelSize(19)) + 'px');
+            (this.collisionObj.y + toBoardPixelSize(16) - toBoardPixelSize(19)) + 'px');
     }
 
     update() {
@@ -123,7 +132,7 @@ export class Balcony extends Tile {
 
     drawBack() {
         drawBalcony(this.ctx,
-            this.boardX, this.boardY, this.collisionObj.width, this.collisionObj.height,
+            this.boardX, this.boardY, toBoardPixelSize(16), toBoardPixelSize(16),
             "#999a9e", "#3e3846", "#686b7a"
         );
         genSmallBox(this.ctx,
@@ -145,5 +154,15 @@ export class Balcony extends Tile {
                 this.iceCreamColors
             );
         }
+    }
+
+    drawHighlight(color) {
+        this.ctx.fillStyle = color + "66";
+        this.ctx.fillRect(
+            toBoardPixelSize(this.boardX * GameVars.tileSize),
+            toBoardPixelSize(this.boardY * GameVars.tileSize),
+            toBoardPixelSize(GameVars.tileSize),
+            toBoardPixelSize(GameVars.tileSize)
+        );
     }
 }
