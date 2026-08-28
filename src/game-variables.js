@@ -1,7 +1,5 @@
 import { Point } from "./entities/point";
 
-const isMobile = navigator.maxTouchPoints > 1 && navigator.maxTouchPoints !== 256;
-
 const tileSize = 16;
 
 const gameBoardSize = 16;
@@ -26,6 +24,8 @@ const pixelCal = (min, max) => {
     let pixelSize = hgPixelSize < wdPixelSize ? hgPixelSize : wdPixelSize;
     return pixelSize >= 1 ? pixelSize : 1;
 };
+
+let isMobile;
 
 let game;
 let deltaTime;

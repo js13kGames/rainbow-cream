@@ -4,6 +4,7 @@ import { GameVars, removeBoardPixelSize, toBoardPixelSize, toPixelSize } from ".
 import { Bin, Cashier, Character, Cone, ConeMachine, ConeWithStep1, ConeWithStep2, ConeWithStep3, Unicorn } from "../sprites/tile-sprites";
 import { createPixelLine, drawSprite } from "../utilities/draw-utilities";
 import { createElem, setElemSize } from "../utilities/elem-utilities";
+import { randomNumbOnRange } from "../utilities/general-utilities";
 import { generateTile } from "../utilities/tile-factory";
 import { Customer } from "./customer";
 import { Player } from "./player";
@@ -15,6 +16,8 @@ export class Board {
         this.levelWalls = [];
         this.x = 0;
         this.y = 0;
+        this.customerSpawnTimer = 0;
+        this.customerNextSpawn = 2;
 
         this.lastPixelSize = toBoardPixelSize(1);
 
@@ -41,7 +44,7 @@ export class Board {
 
     createBackground() {
         this.backgroundCanvas = createElem(this.gameDiv, "canvas", "board-background", null,
-            toBoardPixelSize(GameVars.gameWdAsPixels), toBoardPixelSize(GameVars.gameHgAsPixels), GameVars.isMobile, "#2f492c");
+            toBoardPixelSize(GameVars.gameWdAsPixels), toBoardPixelSize(GameVars.gameHgAsPixels), "#2f492c");
         const lines = [];
         for (let i = 0; i < GameVars.gameHgAsPixels / 12; i++) {
             createPixelLine(0, 16 * i + 2, GameVars.gameWdAsPixels, 16 * i + 2, "#21341f", toBoardPixelSize(1), lines);
@@ -162,6 +165,25 @@ export class Board {
             this.iceCreamMachine[key].update();
         }
         this.customers.forEach(c => c.update());
+
+        if (!GameVars.game.isTutorial) {
+            if (!this.customers.find(c => c.boardY == 14)) {
+                if (this.customerSpawnTimer >= this.customerNextSpawn) {
+                    this.customerSpawnTimer -= this.customerNextSpawn;
+                    this.customerNextSpawn = randomNumbOnRange(2, 6);
+                    const customer = new Customer(6, 14, this.boardCtx);
+                    this.customers.push(customer);
+                } else {
+                    this.customerSpawnTimer += GameVars.deltaTime;
+                }
+            }
+        }
+        this.customers.forEach(c => {
+            if (c.boardX == 6 && c.boardY != 10 && !this.customers.find(c2 => c2.boardX == c.boardX && c2.boardY == c.boardY - 1)) {
+                c.moveToBoardPos(6, c.boardY - 1);
+            }
+        });
+        this.player.update();
     }
 
     draw() {

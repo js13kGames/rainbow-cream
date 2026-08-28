@@ -17,7 +17,10 @@ export class Game {
         this.isTutorial = true;
         this.playerMoney = 500;
 
-        this.rentCost = 100;
+        this.rentCost = 2;
+        this.rentDuration = 1;
+        this.rentTimer = 0;
+
         this.flourCost = 100;
         this.grainCost = 100;
 
@@ -25,6 +28,8 @@ export class Game {
 
         this.board = new Board(this.gameDiv);
         this.ui = new UI(this);
+
+        this.board.cachiers[0].createInteractionBallon();
     }
 
     collectIceCreamPayment(customerPatienceLevel) {
@@ -33,7 +38,7 @@ export class Game {
 
     getIceCreamCost(customerPatienceLevel) {
         const tipLevel = customerPatienceLevel < 33 ? 0 : customerPatienceLevel < 66 ? 1 : 2;
-        return Math.ceil(this.iceCreamCost + (tipLevel * this.iceCreamCost / 4));
+        return Math.round(this.iceCreamCost + (tipLevel * this.iceCreamCost / 4));
     }
 
     pay(amount) {
@@ -50,6 +55,15 @@ export class Game {
 
     update() {
         this.board.update();
+        if (this.rentTimer >= this.rentDuration) {
+            this.rentTimer -= this.rentDuration;
+            this.playerMoney = clamp(this.playerMoney - this.rentCost, 0, this.playerMoney);
+            if (this.playerMoney == 0) {
+                // GAME OVER
+            }
+        } else {
+            this.rentTimer += GameVars.deltaTime;
+        }
     }
 
     updateZoom() {

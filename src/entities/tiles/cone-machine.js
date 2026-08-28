@@ -18,8 +18,10 @@ export class ConeMachine extends Tile {
     }
 
     createInteractionBallon() {
+        const player = GameVars.game.board.player;
+        player.moveToBoardPos(this.boardX, this.boardY + 1);
         if (!this.takeCone) {
-            this.buyFlour = createElem(this.gameDiv, "canvas", null, null, toBoardPixelSize(62), toBoardPixelSize(10), GameVars.isMobile, null, () => {
+            this.buyFlour = createElem(this.gameDiv, "canvas", null, null, toBoardPixelSize(62), toBoardPixelSize(10), null, () => {
                 GameVars.game.board.player.moveToBoardPos(this.boardX, this.boardY + 1);
                 GameVars.game.pay(this.flourPrice());
                 this.flourAmount = 100;
@@ -28,9 +30,7 @@ export class ConeMachine extends Tile {
             genSmallBox(buyFlourCtx, 0, 0, 60, 9, toBoardPixelSize(1), "#000000", "#ffffff");
             drawPixelTextInCanvas("add flour $-" + this.flourPrice(), buyFlourCtx, toBoardPixelSize(1), 31, 5, "#000000", 1);
 
-            this.takeCone = createElem(this.gameDiv, "canvas", null, null, toBoardPixelSize(44), toBoardPixelSize(12), GameVars.isMobile, null, () => {
-                const player = GameVars.game.board.player;
-                player.moveToBoardPos(this.boardX, this.boardY + 1);
+            this.takeCone = createElem(this.gameDiv, "canvas", null, null, toBoardPixelSize(44), toBoardPixelSize(12), null, () => {
                 if (!player.hasCone && this.flourAmount > 0) {
                     this.flourAmount = clamp(this.flourAmount - 10, 0, 100);
                     player.collectCone();
@@ -52,7 +52,7 @@ export class ConeMachine extends Tile {
 
     flourPrice() {
         const flourPerc = (100 - this.flourAmount) / 100
-        return GameVars.game.flourCost * flourPerc;
+        return Math.round(GameVars.game.flourCost * flourPerc);
     }
 
     destroyInteractionBallon() {

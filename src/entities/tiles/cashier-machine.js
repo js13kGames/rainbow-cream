@@ -16,13 +16,17 @@ export class CashierMachine extends Tile {
     }
 
     createInteractionBallon() {
-        if (this.customer && !this.interactionBallon) {
-            this.interactionBallon = createElem(this.gameDiv, "canvas", null, null, toBoardPixelSize(44), toBoardPixelSize(12), GameVars.isMobile, null, () => {
-                const availableBalcony = GameVars.game.board.balconies.find(b => !b.hasCustomer);
-                GameVars.game.board.player.moveToBoardPos(this.boardX, this.boardY - 1);
-                this.customer.moveToBoardPos(availableBalcony.boardX, this.boardY + 1);
-                this.customer = null;
-                this.destroyInteractionBallon();
+        GameVars.game.board.player.moveToBoardPos(this.boardX, this.boardY - 1);
+        if (!this.interactionBallon) {
+            this.interactionBallon = createElem(this.gameDiv, "canvas", null, null, toBoardPixelSize(44), toBoardPixelSize(12), null, () => {
+                const availableBalcony = GameVars.game.board.balconies.find(b => !b.customer);
+                this.customer = GameVars.game.board.customers.find(customer => customer.boardX == this.boardX && customer.boardY == this.boardY + 1);
+                if (availableBalcony && this.customer) {
+                    this.customer.moveToBoardPos(availableBalcony.boardX, this.boardY + 1);
+                    this.customer.increasePatience();
+                    this.customer = null;
+                    this.destroyInteractionBallon();
+                }
             });
 
             this.updateInteractiveBallonPos();
@@ -44,18 +48,6 @@ export class CashierMachine extends Tile {
     updateInteractiveBallonPos() {
         this.interactionBallon && (this.interactionBallon.style.translate = (this.collisionObj.x - toBoardPixelSize(42)) + 'px ' +
             (this.collisionObj.y - toBoardPixelSize(14)) + 'px');
-    }
-
-    update() {
-        const canHaveClient = GameVars.game.board.balconies.find(b => !b.hasCustomer);
-        if (!this.customer && canHaveClient) {
-            this.customer = GameVars.game.board.customers.find(customer => customer.boardX == this.boardX && customer.boardY == this.boardY + 1);
-            if (this.customer) this.createInteractionBallon();
-        }
-        if ((this.customer && !canHaveClient) || !GameVars.game.board.customers.find(c => c == this.customer)) {
-            this.customer = null;
-            this.destroyInteractionBallon();
-        }
     }
 
     drawBack() {

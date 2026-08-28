@@ -3,17 +3,33 @@ import { GameVars, toBoardPixelSize } from "../game-variables";
 import { Character } from "../sprites/tile-sprites";
 import { genSmallBox } from "../utilities/box-generator";
 import { drawSprite } from "../utilities/draw-utilities";
-import { clamp, randomNumb } from "../utilities/general-utilities";
+import { clamp, randomNumb, randomNumbOnRange } from "../utilities/general-utilities";
 
 export class Customer {
     constructor(boardX, boardY, ctx) {
         this.boardX = boardX;
         this.boardY = boardY;
+
+        this.centerX = (this.boardX * GameVars.tileSize) + (GameVars.tileSize / 2);
+        this.centerY = (this.boardY * GameVars.tileSize) + (GameVars.tileSize / 2);
+
+        this.nextCenterX = this.centerX;
+        this.nextCenterY = this.centerY;
+
+        this.jumpingTimer = 0;
+        this.jumpingExtra = 0;
+        this.isGoingUp = true;
+
         this.ctx = ctx;
         this.flavoursAmount = GameVars.game.isTutorial ? 2 : randomNumb(3);
         this.flavoursColors = this.createIceCreamColors();
         this.patienceLevel = 100;
+        this.patienceReduction = randomNumbOnRange(1, 5);
         this.productionTimer = 0;
+    }
+
+    increasePatience() {
+        this.patienceLevel = clamp(this.patienceLevel + 33, 0, 100);
     }
 
     createIceCreamColors() {
@@ -37,45 +53,78 @@ export class Customer {
     }
 
     moveToBoardPos(boardX, boardY) {
-        this.boardX = boardX;
-        this.boardY = boardY;
+        this.nextCenterX = (boardX * GameVars.tileSize) + (GameVars.tileSize / 2);
+        this.nextCenterY = (boardY * GameVars.tileSize) + (GameVars.tileSize / 2);
     }
 
     update() {
         if (this.productionTimer >= 1) {
             this.productionTimer -= 1;
-            this.patienceLevel = clamp(this.patienceLevel - 5, 0, 100);
+            this.patienceLevel = clamp(this.patienceLevel - this.patienceReduction, 0, 100);
             if (this.patienceLevel == 0) {
-                const customerIndex = GameVars.game.board.customers.indexOf(this.customer);
-                GameVars.game.board.customers.splice(customerIndex, 1);
+                this.moveToBoardPos(10, 15);
             }
         } else {
             this.productionTimer += GameVars.deltaTime;
         }
+
+        if (this.isMoving()) {
+            if (this.jumpingTimer >= 0.05) {
+                this.jumpingTimer -= 0.05;
+                this.isGoingUp = !this.isGoingUp;
+            } else {
+                this.jumpingTimer += GameVars.deltaTime;
+            }
+
+            const xdiff = this.nextCenterX - this.centerX;
+            const ydiff = this.nextCenterY - this.centerY;
+
+            this.centerX += xdiff == 0 ? 0 : xdiff > 0 ? 1 : -1;
+            this.centerY += ydiff == 0 ? 0 : ydiff > 0 ? 1 : -1;
+
+            this.boardX = Math.round((this.centerX / GameVars.tileSize) - 0.5);
+            this.boardY = Math.round((this.centerY / GameVars.tileSize) - 0.5);
+        }
+
+        if (this.boardX == 10 && this.boardY == 15) {
+            const customerIndex = GameVars.game.board.customers.findIndex(c => c == this);
+            if (customerIndex != -1) GameVars.game.board.customers.splice(customerIndex, 1);
+        }
+    }
+
+    isMoving() {
+        return this.centerX != this.nextCenterX || this.centerY != this.nextCenterY;
     }
 
     draw() {
+        if (this.isMoving()) {
+            this.jumpingExtra += this.isGoingUp ? 1 : -1;
+        } else {
+            this.jumpingExtra = 0;
+        }
+        const yPos = this.centerY + this.jumpingExtra;
+
         genSmallBox(this.ctx,
-            (this.boardX * GameVars.tileSize) + 2,
-            (this.boardY * GameVars.tileSize) + 5,
+            this.centerX - 6,
+            yPos - 3,
             11, 7,
             toBoardPixelSize(1), "#00000066", "#00000066");
         drawSprite(this.ctx, Character,
             toBoardPixelSize(1),
-            (this.boardX * GameVars.tileSize) + 3,
-            (this.boardY * GameVars.tileSize) - 12
+            this.centerX - 5,
+            yPos - 19
         );
 
         genSmallBox(this.ctx,
-            (this.boardX * GameVars.tileSize) + 1,
-            (this.boardY * GameVars.tileSize) - 16,
+            this.centerX - 7,
+            yPos - 24,
             13, 3,
             toBoardPixelSize(1), "#000000", "#1b1116");
 
         this.ctx.fillStyle = getRangeColor(this.patienceLevel);
         this.ctx.fillRect(
-            toBoardPixelSize((this.boardX * GameVars.tileSize) + 2),
-            toBoardPixelSize((this.boardY * GameVars.tileSize) - 15),
+            toBoardPixelSize(this.centerX - 6),
+            toBoardPixelSize(yPos - 23),
             toBoardPixelSize((12 * this.patienceLevel) / 100), toBoardPixelSize(2)
         );
     }

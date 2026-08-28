@@ -11,9 +11,9 @@ import { Tile } from "./tile";
 
 export class BinTile extends Tile {
     createInteractionBallon() {
+        GameVars.game.board.player.moveToBoardPos(this.boardX - 1, this.boardY);
         if (!this.interactionBallon) {
-            this.interactionBallon = createElem(this.gameDiv, "canvas", null, null, toBoardPixelSize(56), toBoardPixelSize(12), GameVars.isMobile, null, () => {
-                GameVars.game.board.player.moveToBoardPos(this.boardX - 1, this.boardY);
+            this.interactionBallon = createElem(this.gameDiv, "canvas", null, null, toBoardPixelSize(56), toBoardPixelSize(12), null, () => {
                 GameVars.game.board.player.cleanOrder();
                 this.destroyInteractionBallon();
             });

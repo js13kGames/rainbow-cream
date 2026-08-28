@@ -24,10 +24,10 @@ export class IceCreamMachine extends Tile {
     }
 
     createInteractionBallon() {
+        const player = GameVars.game.board.player;
+        player.moveToBoardPos(this.boardX, this.boardY + 1);
         if (!this.takeIcecream) {
-            this.feedGrain = createElem(this.gameDiv, "canvas", null, null, toBoardPixelSize(61), toBoardPixelSize(10), GameVars.isMobile, null, () => {
-                const player = GameVars.game.board.player;
-                player.moveToBoardPos(this.boardX, this.boardY + 1);
+            this.feedGrain = createElem(this.gameDiv, "canvas", null, null, toBoardPixelSize(61), toBoardPixelSize(10), null, () => {
                 GameVars.game.pay(this.grainPrice());
                 this.feedAmount = 100;
             });
@@ -35,9 +35,7 @@ export class IceCreamMachine extends Tile {
             genSmallBox(feedGrainCtx, 0, 0, 60, 9, toBoardPixelSize(1), "#000000", "#ffffff");
             drawPixelTextInCanvas("feed grain $-" + this.grainPrice(), feedGrainCtx, toBoardPixelSize(1), 30, 5, "#000000", 1);
 
-            this.takeIcecream = createElem(this.gameDiv, "canvas", null, null, toBoardPixelSize(56), toBoardPixelSize(12), GameVars.isMobile, null, () => {
-                const player = GameVars.game.board.player;
-                player.moveToBoardPos(this.boardX, this.boardY + 1);
+            this.takeIcecream = createElem(this.gameDiv, "canvas", null, null, toBoardPixelSize(56), toBoardPixelSize(12), null, () => {
                 if (player.hasCone && this.iceCreamAmount > 10) {
                     this.iceCreamAmount = clamp(this.iceCreamAmount - 10, 0, 100);
                     player.collectIceCream(this.iceCreamColor);
@@ -63,7 +61,7 @@ export class IceCreamMachine extends Tile {
 
     grainPrice() {
         const grainPerc = (100 - this.feedAmount) / 100
-        return GameVars.game.grainCost * grainPerc;
+        return Math.round(GameVars.game.grainCost * grainPerc);
     }
 
     activateTutorialIceCreamMachine(color) {

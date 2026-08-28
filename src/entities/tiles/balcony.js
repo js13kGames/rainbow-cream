@@ -1,3 +1,4 @@
+import { getDarkColorByType, getLightColorByType } from "../../enum/color-type";
 import { TileType } from "../../enum/tile-type";
 import { GameVars, toBoardPixelSize, toPixelSize } from "../../game-variables";
 import { ConeWithStep3 } from "../../sprites/tile-sprites";
@@ -16,28 +17,23 @@ export class Balcony extends Tile {
     }
 
     createInteractionBallon() {
+        const player = GameVars.game.board.player;
+        player.moveToBoardPos(this.boardX, this.boardY - 1);
         if (!this.interactionBallon && this.customer) {
-            this.interactionBallon = createElem(this.gameDiv, "canvas", null, null, toBoardPixelSize(56), toBoardPixelSize(12), GameVars.isMobile, null, () => {
-                const player = GameVars.game.board.player;
-                player.moveToBoardPos(this.boardX, this.boardY - 1);
+            this.interactionBallon = createElem(this.gameDiv, "canvas", null, null, toBoardPixelSize(56), toBoardPixelSize(12), null, () => {
                 if (this.checkIfOrderIsCorrect(player)) {
                     GameVars.game.collectIceCreamPayment(this.customer.patienceLevel);
 
-                    const customerIndex = GameVars.game.board.customers.indexOf(this.customer);
-                    GameVars.game.board.customers.splice(customerIndex, 1);
-
+                    this.customer.moveToBoardPos(10, 15);
                     this.customer = null;
 
                     player.cleanOrder();
 
                     this.destroyInteractionBallon();
 
-                    if (GameVars.game.isTutorial) GameVars.game.isTutorial = false;
-
-                    // give money to player
-                    // if happy gives extra money
-                } else {
-                    // error wrong order etc
+                    if (GameVars.game.isTutorial) {
+                        GameVars.game.isTutorial = false;
+                    }
                 }
             });
 
@@ -51,6 +47,7 @@ export class Balcony extends Tile {
     }
 
     checkIfOrderIsCorrect(player) {
+        if (player.iceCreamColors.length < 3) return false;
         for (let i = 0; i < player.iceCreamColors.length; i++) {
             if (player.iceCreamColors[i] != this.customer.flavoursColors[i]) return false;
         }

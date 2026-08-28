@@ -33,9 +33,8 @@ const init = () => {
 }
 
 const initHandlers = () => {
-    gameBoardDiv.onmousemove = (event) => game.mov(event.pageX, event.pageY);
+    gameBoardDiv.onmousemove = (e) => game.mov(e.pageX, e.pageY);
     gameBoardDiv.onmousedown = (e) => game.click(e.clientX, e.clientY);
-
     gameBoardDiv.ontouchstart = (e) => game.click(e.touches[0].clientX, e.touches[0].clientY);
 }
 
