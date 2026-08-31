@@ -157,6 +157,12 @@ export class Board {
     resize() {
         this.updateBoardPos(0, 0);
         setElemSize(this.backgroundCanvas, toBoardPixelSize(GameVars.gameWdAsPixels), toBoardPixelSize(GameVars.gameHgAsPixels));
+        const ctx = this.backgroundCanvas.getContext("2d");
+        const lines = [];
+        for (let i = 0; i < GameVars.gameHgAsPixels / 12; i++) {
+            createPixelLine(0, 16 * i + 2, GameVars.gameWdAsPixels, 16 * i + 2, "#21341f", toBoardPixelSize(1), lines);
+        }
+        lines.forEach(line => line.draw(ctx));
         this.drawGameBoardShadow();
         this.setGameBoardCanvas();
         this.boardTiles.forEach(tileRow => tileRow.forEach(tile => tile.updateZoom()));
