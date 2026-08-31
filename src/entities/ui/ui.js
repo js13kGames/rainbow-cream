@@ -1,6 +1,6 @@
 import { GameVars, toPixelSize } from "../../game-variables";
 import { genLargeBox, genSmallBox } from "../../utilities/box-generator";
-import { createElem } from "../../utilities/elem-utilities";
+import { createElem, setElemSize } from "../../utilities/elem-utilities";
 import { drawPixelTextInCanvas } from "../../utilities/text";
 
 export class UI {
@@ -57,6 +57,23 @@ export class UI {
     reset() {
         clearInterval(this.timerInterval);
         this.uiDiv.remove();
+    }
+
+    resize() {
+        setElemSize(this.timer, toPixelSize(80), toPixelSize(34));
+        this.timer.style.translate = (toPixelSize(8)) + 'px ' + (toPixelSize(8)) + 'px';
+
+        setElemSize(this.zoom, toPixelSize(26), toPixelSize(61));
+        this.zoom.style.translate = (GameVars.gameW - this.zoom.width - toPixelSize(8)) + 'px ' + ((GameVars.gameH - this.zoom.height) / 2) + 'px';
+
+        setElemSize(this.zoomPlus, toPixelSize(18), toPixelSize(18));
+        this.zoomPlus.style.translate = (GameVars.gameW - this.zoom.width - toPixelSize(4)) + 'px ' + (((GameVars.gameH - this.zoom.height) / 2) + toPixelSize(15)) + 'px';
+
+        setElemSize(this.zoomMinus, toPixelSize(18), toPixelSize(18));
+        this.zoomMinus.style.translate = (GameVars.gameW - this.zoom.width - toPixelSize(4)) + 'px ' + (((GameVars.gameH - this.zoom.height) / 2) + toPixelSize(37)) + 'px';
+
+        setElemSize(this.resetLevelBtn, toPixelSize(52), toPixelSize(24));
+        this.resetLevelBtn.style.translate = (GameVars.gameW - this.resetLevelBtn.width - toPixelSize(8)) + 'px ' + (GameVars.gameH - this.resetLevelBtn.height - toPixelSize(8)) + 'px';
     }
 
     draw() {

@@ -81,6 +81,13 @@ export class Game {
         }
     }
 
+    resize() {
+        if (this.isGameRunning) {
+            this.board?.resize();
+            this.ui?.resize();
+        }
+    }
+
     reset() {
         this.ui.reset();
     }

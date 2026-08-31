@@ -154,6 +154,15 @@ export class Board {
         this.lastPixelSize = toBoardPixelSize(1);
     }
 
+    resize() {
+        this.updateBoardPos(0, 0);
+        setElemSize(this.backgroundCanvas, toBoardPixelSize(GameVars.gameWdAsPixels), toBoardPixelSize(GameVars.gameHgAsPixels));
+        this.drawGameBoardShadow();
+        this.setGameBoardCanvas();
+        this.boardTiles.forEach(tileRow => tileRow.forEach(tile => tile.updateZoom()));
+        this.resetBoardPos();
+    }
+
     retrieveNewDiff(value) {
         return value * toBoardPixelSize(1) / this.lastPixelSize;
     }

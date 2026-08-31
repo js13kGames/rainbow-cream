@@ -41,6 +41,7 @@ const addEventListeners = () => {
     gameBoardDiv.ontouchstart = (e) => game.click(e.touches[0].clientX, e.touches[0].clientY);
     window.addEventListener("resize", () => {
         GameVars.updatePixelSize(window.innerWidth, window.innerHeight);
+        game.resize();
         drawMenus();
     });
 }
