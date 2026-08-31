@@ -1,6 +1,6 @@
 import { ColorType, getDarkColorByType, getLightColorByType } from "../enum/color-type";
 import { GameVars, toBoardPixelSize } from "../game-variables";
-import { Character, Cone, ConeWithStep1, ConeWithStep2, ConeWithStep3 } from "../sprites/tile-sprites";
+import { Character, CharacterColor, Cone, ConeWithStep1, ConeWithStep2, ConeWithStep3 } from "../sprites/tile-sprites";
 import { genSmallBox } from "../utilities/box-generator";
 import { drawSprite } from "../utilities/draw-utilities";
 import { randomNumb } from "../utilities/general-utilities";
@@ -24,6 +24,8 @@ export class Player {
         this.ctx = ctx;
         this.hasCone = false;
         this.iceCreamColors = [];
+
+        this.playerColor = CharacterColor[randomNumb(CharacterColor.length)];
     }
 
     moveToBoardPos(boardX, boardY) {
@@ -86,7 +88,8 @@ export class Player {
         drawSprite(this.ctx, Character,
             toBoardPixelSize(1),
             this.centerX - 5,
-            yPos - 19
+            yPos - 19,
+            { "cc": this.playerColor }
         );
         drawPixelTextInCanvas("P", this.ctx, toBoardPixelSize(1),
             this.centerX,

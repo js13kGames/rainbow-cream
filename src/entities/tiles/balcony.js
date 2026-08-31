@@ -1,4 +1,4 @@
-import { getDarkColorByType, getLightColorByType } from "../../enum/color-type";
+import { ColorType, getDarkColorByType, getLightColorByType } from "../../enum/color-type";
 import { TileType } from "../../enum/tile-type";
 import { GameVars, toBoardPixelSize, toPixelSize } from "../../game-variables";
 import { ConeWithStep3 } from "../../sprites/tile-sprites";
@@ -124,9 +124,9 @@ export class Balcony extends Tile {
 
     createThreeColorsIceCream() {
         return {
-            "lc1": "#00bcd4", "dc1": "#10495e",
-            "lc2": "#ffff57", "dc2": "#cd9722",
-            "lc3": "#a80000", "dc3": "#641f14",
+            "lc1": getLightColorByType(ColorType.BLUE), "dc1": getDarkColorByType(ColorType.BLUE),
+            "lc2": getLightColorByType(ColorType.YELLOW), "dc2": getDarkColorByType(ColorType.YELLOW),
+            "lc3": getLightColorByType(ColorType.RED), "dc3": getDarkColorByType(ColorType.RED),
         };
     }
 

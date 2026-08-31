@@ -1,6 +1,6 @@
 import { Pixel } from "../entities/pixel";
 import { Triangle } from "../entities/triangle";
-import { GameVars, toBoardPixelSize } from "../game-variables";
+import { GameVars, removeBoardPixelSize, toBoardPixelSize } from "../game-variables";
 
 export const drawSprite = (ctx, sprite, pixelSize = 1, startX = 0, startY = 0, colorIds = null, invertX = false, invertY = false) => {
     sprite.forEach((row, y) => {
@@ -82,30 +82,66 @@ export const drawFloor = (ctx, boardX, boardY, width, height,
 
 export const drawBalcony = (ctx, boardX, boardY, width, height,
     topLightColor, middleColor, bottomDarkColor) => {
-    ctx.fillStyle = "#999a9e";
+    drawBalconyOnPos(ctx, 1,
+        boardX * GameVars.tileSize, boardY * GameVars.tileSize,
+        width, height,
+        topLightColor, middleColor, bottomDarkColor);
+}
+
+export const drawBalconyOnPos = (ctx, pixelSize, x, y, width, height,
+    topLightColor, middleColor, bottomDarkColor) => {
+    ctx.fillStyle = topLightColor ?? "#999a9e";
     ctx.fillRect(
-        toBoardPixelSize(boardX * GameVars.tileSize),
-        toBoardPixelSize(boardY * GameVars.tileSize),
+        toBoardPixelSize(x),
+        toBoardPixelSize(y),
         width, height / 2);
 
-    ctx.fillStyle = "#3e3846";
+    ctx.fillStyle = middleColor ?? "#3e3846";
     ctx.fillRect(
-        toBoardPixelSize(boardX * GameVars.tileSize),
-        toBoardPixelSize((boardY * GameVars.tileSize) + GameVars.tileSize / 2),
+        toBoardPixelSize(x),
+        toBoardPixelSize((y) + removeBoardPixelSize(height) / 2),
         width, height / 2
     );
 
-    ctx.fillStyle = "#686b7a";
+    ctx.fillStyle = bottomDarkColor ?? "#686b7a";
     ctx.fillRect(
-        toBoardPixelSize((boardX * GameVars.tileSize) + 1),
-        toBoardPixelSize((boardY * GameVars.tileSize) + 1),
-        width - toBoardPixelSize(2),
-        height / 2 - toBoardPixelSize(2)
+        toBoardPixelSize((x) + pixelSize),
+        toBoardPixelSize((y) + pixelSize),
+        width - toBoardPixelSize(pixelSize * 2),
+        height / 2 - toBoardPixelSize(pixelSize * 2)
     );
     ctx.fillRect(
-        toBoardPixelSize((boardX * GameVars.tileSize) + 1),
-        toBoardPixelSize((boardY * GameVars.tileSize) + (GameVars.tileSize / 2) + 1),
-        width - toBoardPixelSize(2),
-        height / 2 - toBoardPixelSize(2)
+        toBoardPixelSize((x) + pixelSize),
+        toBoardPixelSize((y) + (removeBoardPixelSize(height) / 2) + pixelSize),
+        width - toBoardPixelSize(pixelSize * 2),
+        height / 2 - toBoardPixelSize(pixelSize * 2)
     );
+}
+
+export const drawWall = (ctx, boardX, boardY, width, height, frontColor, backColor) => {
+    drawWallOnPos(ctx, 1,
+        boardX * GameVars.tileSize, boardY * GameVars.tileSize,
+        width, height, frontColor, backColor);
+}
+
+export const drawWallOnPos = (ctx, pixelSize, x, y, width, height, frontColor, backColor) => {
+    ctx.fillStyle = backColor;
+    ctx.fillRect(
+        toBoardPixelSize(x),
+        toBoardPixelSize(y),
+        width, height);
+
+    ctx.fillStyle = frontColor;
+    ctx.fillRect(
+        toBoardPixelSize(x),
+        toBoardPixelSize((y) + pixelSize),
+        toBoardPixelSize(pixelSize * 7), toBoardPixelSize(pixelSize * 6));
+    ctx.fillRect(
+        toBoardPixelSize((x) + pixelSize * 9),
+        toBoardPixelSize((y) + pixelSize),
+        toBoardPixelSize(pixelSize * 7), toBoardPixelSize(pixelSize * 6));
+    ctx.fillRect(
+        toBoardPixelSize(x),
+        toBoardPixelSize((y) + pixelSize * 9),
+        toBoardPixelSize(pixelSize * 14), toBoardPixelSize(pixelSize * 6));
 }

@@ -30,6 +30,8 @@ export class Game {
         this.ui = new UI(this);
 
         this.board.cachiers[0].createInteractionBallon();
+
+        this.isGameRunning = true;
     }
 
     collectIceCreamPayment(customerPatienceLevel) {
@@ -54,15 +56,17 @@ export class Game {
     }
 
     update() {
-        this.board.update();
-        if (this.rentTimer >= this.rentDuration) {
-            this.rentTimer -= this.rentDuration;
-            this.playerMoney = clamp(this.playerMoney - this.rentCost, 0, this.playerMoney);
-            if (this.playerMoney == 0) {
-                // GAME OVER
+        if (this.isGameRunning) {
+            this.board.update();
+            if (this.rentTimer >= this.rentDuration) {
+                this.rentTimer -= this.rentDuration;
+                this.playerMoney = clamp(this.playerMoney - this.rentCost, 0, this.playerMoney);
+                if (this.playerMoney == 0) {
+                    // GAME OVER
+                }
+            } else {
+                this.rentTimer += GameVars.deltaTime;
             }
-        } else {
-            this.rentTimer += GameVars.deltaTime;
         }
     }
 
@@ -71,8 +75,10 @@ export class Game {
     }
 
     draw() {
-        this.board?.draw();
-        this.ui?.draw();
+        if (this.isGameRunning) {
+            this.board?.draw();
+            this.ui?.draw();
+        }
     }
 
     reset() {

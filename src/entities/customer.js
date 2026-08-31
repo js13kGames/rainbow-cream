@@ -1,6 +1,6 @@
 import { ColorType, getDarkColorByType, getLightColorByType, getRangeColor } from "../enum/color-type";
 import { GameVars, toBoardPixelSize } from "../game-variables";
-import { Character } from "../sprites/tile-sprites";
+import { Character, CharacterColor } from "../sprites/tile-sprites";
 import { genSmallBox } from "../utilities/box-generator";
 import { drawSprite } from "../utilities/draw-utilities";
 import { clamp, randomNumb, randomNumbOnRange } from "../utilities/general-utilities";
@@ -26,6 +26,8 @@ export class Customer {
         this.patienceLevel = 100;
         this.patienceReduction = randomNumbOnRange(1, 5);
         this.productionTimer = 0;
+
+        this.customerColor = CharacterColor[randomNumb(CharacterColor.length)];
     }
 
     increasePatience() {
@@ -88,7 +90,10 @@ export class Customer {
 
         if (this.boardX == 10 && this.boardY == 15) {
             const customerIndex = GameVars.game.board.customers.findIndex(c => c == this);
-            if (customerIndex != -1) GameVars.game.board.customers.splice(customerIndex, 1);
+            if (customerIndex != -1) {
+                if (GameVars.game.isTutorial) GameVars.game.isTutorial = false;
+                GameVars.game.board.customers.splice(customerIndex, 1);
+            }
         }
     }
 
@@ -112,7 +117,8 @@ export class Customer {
         drawSprite(this.ctx, Character,
             toBoardPixelSize(1),
             this.centerX - 5,
-            yPos - 19
+            yPos - 19,
+            { "cc": this.customerColor }
         );
 
         genSmallBox(this.ctx,

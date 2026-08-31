@@ -1,13 +1,20 @@
-import { GameVars, toPixelSize } from "./game-variables";
-import { createElem } from "./utilities/elem-utilities";
+import { GameVars, toBoardPixelSize, toPixelSize } from "./game-variables";
+import { createElem, setElemSize } from "./utilities/elem-utilities";
 import { Game } from "./game";
 import { genSmallBox } from "./utilities/box-generator";
 import { drawPixelTextInCanvas } from "./utilities/text";
-import { drawSprite, createPixelLine } from "./utilities/draw-utilities";
+import { drawSprite, createPixelLine, drawBalcony, drawBalconyOnPos, drawWallOnPos } from "./utilities/draw-utilities";
 import { Sound } from "./sound/sound";
 import { SpeakerSprite, AudioSprite } from "./sprites/sound-sprites";
+import { Character, CharacterColor, ConeWithStep3, Unicorn } from "./sprites/tile-sprites";
+import { ColorType, getDarkColorByType, getLightColorByType } from "./enum/color-type";
+import { randomNumb } from "./utilities/general-utilities";
 
 let mainDiv;
+
+let mainMenuDiv;
+let mainMenuCanv;
+let mainMenuBtn;
 
 let gameDiv;
 let gameBoardDiv;
@@ -20,22 +27,122 @@ let oldTimeStamp = 0;
 const init = () => {
     GameVars.updatePixelSize(window.innerWidth, window.innerHeight);
 
+    createMainMenu();
+
+    game = new Game(gameBoardDiv);
+
+    addEventListeners();
+    window.requestAnimationFrame(() => gameLoop());
+}
+
+const addEventListeners = () => {
+    gameBoardDiv.onmousemove = (e) => game.mov(e.pageX, e.pageY);
+    gameBoardDiv.onmousedown = (e) => game.click(e.clientX, e.clientY);
+    gameBoardDiv.ontouchstart = (e) => game.click(e.touches[0].clientX, e.touches[0].clientY);
+    window.addEventListener("resize", () => {
+        GameVars.updatePixelSize(window.innerWidth, window.innerHeight);
+        drawMenus();
+    });
+}
+
+const createMainMenu = () => {
     mainDiv = document.getElementById("main");
 
     gameDiv = createElem(mainDiv, "div", "game");
     gameBoardDiv = createElem(gameDiv, "div", "board-div");
 
-    game = new Game(gameBoardDiv);
-    game.init();
+    mainMenuDiv = createElem(mainDiv, "div", "main-menu");
+    mainMenuCanv = createElem(mainMenuDiv, "canvas");
 
-    initHandlers();
-    window.requestAnimationFrame(() => gameLoop());
+    mainMenuBtn = createElem(mainMenuDiv, "canvas", null, null, null, null, null, startGame);
+
+    drawMenus();
 }
 
-const initHandlers = () => {
-    gameBoardDiv.onmousemove = (e) => game.mov(e.pageX, e.pageY);
-    gameBoardDiv.onmousedown = (e) => game.click(e.clientX, e.clientY);
-    gameBoardDiv.ontouchstart = (e) => game.click(e.touches[0].clientX, e.touches[0].clientY);
+const startGame = () => {
+    mainMenuDiv.classList.add("hidden");
+    game.init();
+}
+
+const drawMenus = () => {
+    setElemSize(mainMenuCanv, GameVars.gameW, GameVars.gameH);
+    const mainMenuCtx = mainMenuCanv.getContext("2d");
+
+    const floorPosY = Math.round(GameVars.gameH / 2) - toPixelSize(7 * 3);
+    const halfW = Math.round(GameVars.gameW / 2);
+    const halfH = Math.round(GameVars.gameH / 2);
+
+    mainMenuCtx.fillStyle = "#395a36";
+    mainMenuCtx.fillRect(0, 0, GameVars.gameW, floorPosY);
+    mainMenuCtx.fillStyle = "#474747";
+    mainMenuCtx.fillRect(0, floorPosY, GameVars.gameW, GameVars.gameH - floorPosY);
+
+    const gridBaseX = halfW - toPixelSize(24) + toPixelSize(3);
+    const gridBaseY = halfH - toPixelSize(69) + toPixelSize(3);
+
+    for (let y = -10; y <= 10; y++) {
+        const yPos = gridBaseY + toPixelSize(y * 48);
+        mainMenuCtx.fillStyle = yPos > floorPosY ? "#515151" : "#41663d";
+
+        for (let x = -10; x <= 10; x++) {
+            mainMenuCtx.fillRect(
+                gridBaseX + toPixelSize(x * 48),
+                yPos,
+                toPixelSize(42),
+                toPixelSize(42)
+            );
+        }
+    }
+
+    const wallColY = Math.round(GameVars.gameHgAsPixels / 2) - 117;
+    const wallRowY = Math.round(GameVars.gameHgAsPixels / 2) - 69;
+    const balconyY = Math.round(GameVars.gameHgAsPixels / 2) - 21;
+    const centerXTiles = Math.round(GameVars.gameWdAsPixels / 2) - 24;
+
+    for (let x = -2; x <= 2; x++) {
+        const xPos = centerXTiles + (x * 48);
+        drawWallOnPos(mainMenuCtx, 3, xPos, wallColY, toPixelSize(48), toPixelSize(48), "#cd9722", "#e0ba50");
+        drawWallOnPos(mainMenuCtx, 3, xPos, wallRowY, toPixelSize(48), toPixelSize(48), "#641f14", "#865433");
+        drawBalconyOnPos(mainMenuCtx, 3, xPos, balconyY, toPixelSize(48), toPixelSize(48));
+    }
+
+    const unicornCenterX = Math.round(GameVars.gameW / 2 / toPixelSize(3));
+    const unicornCenterY = Math.round(GameVars.gameH / 2 / toPixelSize(3)) - 3;
+
+    drawSprite(mainMenuCtx, Unicorn, toPixelSize(3), unicornCenterX - 24, unicornCenterY - 20, { "lc": getLightColorByType(ColorType.BLUE), "dc": getDarkColorByType(ColorType.BLUE) });
+    drawSprite(mainMenuCtx, Unicorn, toPixelSize(3), unicornCenterX - 8, unicornCenterY - 20, { "lc": getLightColorByType(ColorType.YELLOW), "dc": getDarkColorByType(ColorType.YELLOW) });
+    drawSprite(mainMenuCtx, Unicorn, toPixelSize(3), unicornCenterX + 8, unicornCenterY - 20, { "lc": getLightColorByType(ColorType.RED), "dc": getDarkColorByType(ColorType.RED) });
+
+    const charPosX = Math.round(GameVars.gameW / 2 / toPixelSize(4)) + 3;
+    const charPosY = Math.round(GameVars.gameH / 2 / toPixelSize(4)) + 4;
+
+    genSmallBox(mainMenuCtx, charPosX - 11, charPosY + 9, 11, 7, toBoardPixelSize(4), "#00000066", "#00000066");
+    drawSprite(mainMenuCtx, Character, toPixelSize(4), charPosX - 10, charPosY - 8, { "cc": CharacterColor[randomNumb(CharacterColor.length)] });
+    drawSprite(mainMenuCtx, ConeWithStep3, toPixelSize(4), charPosX - 4, charPosY - 3, {
+        "lc1": getLightColorByType(ColorType.BLUE), "dc1": getDarkColorByType(ColorType.BLUE),
+        "lc2": getLightColorByType(ColorType.YELLOW), "dc2": getDarkColorByType(ColorType.YELLOW),
+        "lc3": getLightColorByType(ColorType.RED), "dc3": getDarkColorByType(ColorType.RED)
+    });
+
+    const bannerCenterX = Math.round(GameVars.gameW / 2 / toPixelSize(3));
+    genSmallBox(mainMenuCtx, -1, -1, GameVars.gameWdAsPixels + 2, 16, toPixelSize(2), "#9bf2fa", "#1b1116");
+    drawPixelTextInCanvas("rain", mainMenuCtx, toPixelSize(3), bannerCenterX - 17, 5, getLightColorByType(ColorType.BLUE), 1);
+    drawPixelTextInCanvas("bow c", mainMenuCtx, toPixelSize(3), bannerCenterX, 5, getLightColorByType(ColorType.YELLOW), 1);
+    drawPixelTextInCanvas("ream", mainMenuCtx, toPixelSize(3), bannerCenterX + 19, 5, getLightColorByType(ColorType.RED), 1);
+
+    genSmallBox(mainMenuCtx, -1, GameVars.gameHgAsPixels - 16, GameVars.gameWdAsPixels + 1, 16, toPixelSize(1), "#9bf2fa", "#1b1116");
+    drawPixelTextInCanvas("js13kgames 2026 - igor estevao", mainMenuCtx, toPixelSize(1), GameVars.gameWdAsPixels / 2, GameVars.gameHgAsPixels - 8, "#00bcd4", 1);
+
+    createMainBtnStartBtn();
+}
+
+const createMainBtnStartBtn = () => {
+    setElemSize(mainMenuBtn, toPixelSize(112), toPixelSize(32));
+    mainMenuBtn.style.translate = ((GameVars.gameW / 2) - (mainMenuBtn.width / 2)) + 'px ' + ((GameVars.gameH / 4) * 3) + 'px';
+
+    const mainMenuBtnCtx = mainMenuBtn.getContext("2d");
+    genSmallBox(mainMenuBtnCtx, 0, 0, 110, 30, toPixelSize(1), "#9bf2fa", "#1b1116");
+    drawPixelTextInCanvas("start game", mainMenuBtnCtx, toPixelSize(1), 56, 16, "#9bf2fa", 2);
 }
 
 const gameLoop = (timeStamp) => {
