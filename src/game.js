@@ -17,7 +17,7 @@ export class Game {
         this.isTutorial = true;
         this.playerMoney = 500;
 
-        this.rentCost = 2;
+        this.rentCost = 4;
         this.rentDuration = 1;
         this.rentTimer = 0;
 
@@ -32,6 +32,7 @@ export class Game {
         this.board.cachiers[0].createInteractionBallon();
 
         this.isGameRunning = true;
+        this.isGameOver = false;
 
         this.incomePerSecond = 0;
         this.prevMoney = this.playerMoney;
@@ -83,7 +84,8 @@ export class Game {
                 this.rentTimer -= this.rentDuration;
                 this.playerMoney = clamp(this.playerMoney - this.rentCost, 0, this.playerMoney);
                 if (this.playerMoney == 0) {
-                    // GAME OVER
+                    this.isGameRunning = false;
+                    this.isGameOver = true;
                 }
             }
         }

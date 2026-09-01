@@ -25,7 +25,7 @@ export class Customer {
         this.flavoursAmount = GameVars.game.isTutorial ? 2 : randomNumb(3);
         this.flavoursColors = this.createIceCreamColors();
         this.patienceLevel = 100;
-        this.patienceReduction = randomNumbOnRange(1, 5);
+        this.patienceReduction = randomNumbOnRange(1, 4);
         this.productionTimer = 0;
 
         this.customerColor = CharacterColor[randomNumb(CharacterColor.length)];

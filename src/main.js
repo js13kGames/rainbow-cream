@@ -19,10 +19,15 @@ let mainMenuBtn;
 let gameDiv;
 let gameBoardDiv;
 
-let game;
+let gameOverDiv;
+let gameOverCanv;
+let isShowingFinishMenu;
+let timeoutID;
 
 let soundBtnCanv;
 let lastSoundState;
+
+let game;
 
 let secondsPassed;
 let oldTimeStamp = 0;
@@ -73,6 +78,9 @@ const createMainMenu = () => {
 
     soundBtnCanv = createElem(mainDiv, "canvas", null, null, null, null, null, null, toogleSound);
 
+    gameOverDiv = createElem(mainDiv, "div", null, ["hidden"]);
+    gameOverCanv = createElem(gameOverDiv, "canvas");
+
     drawMenus();
     drawSoundBtn(true);
 }
@@ -90,6 +98,12 @@ const toogleSound = () => {
 }
 
 const drawMenus = () => {
+    drawMainMenu();
+    drawGameOverMenu();
+    createMainBtnStartBtn();
+}
+
+const drawMainMenu = () => {
     setElemSize(mainMenuCanv, GameVars.gameW, GameVars.gameH);
     const mainMenuCtx = mainMenuCanv.getContext("2d");
 
@@ -157,8 +171,6 @@ const drawMenus = () => {
 
     genSmallBox(mainMenuCtx, -1, GameVars.gameHgAsPixels - 16, GameVars.gameWdAsPixels + 1, 16, toPixelSize(1), "#9bf2fa", "#1b1116");
     drawPixelTextInCanvas("js13kgames 2026 - igor estevao", mainMenuCtx, toPixelSize(1), GameVars.gameWdAsPixels / 2, GameVars.gameHgAsPixels - 8, "#00bcd4", 1);
-
-    createMainBtnStartBtn();
 }
 
 const createMainBtnStartBtn = () => {
@@ -168,6 +180,15 @@ const createMainBtnStartBtn = () => {
     const mainMenuBtnCtx = mainMenuBtn.getContext("2d");
     genSmallBox(mainMenuBtnCtx, 0, 0, 110, 30, toPixelSize(1), "#9bf2fa", "#1b1116");
     drawPixelTextInCanvas("start game", mainMenuBtnCtx, toPixelSize(1), 56, 16, "#9bf2fa", 2);
+}
+
+const drawGameOverMenu = () => {
+    setElemSize(gameOverCanv, GameVars.gameW, GameVars.gameH);
+    const gameOverCtx = gameOverCanv.getContext("2d");
+    gameOverCtx.clearRect(0, 0, gameOverCanv.width, gameOverCanv.height);
+    gameOverCtx.fillStyle = "#452228dd";
+    gameOverCtx.fillRect(0, 0, gameOverCanv.width, gameOverCanv.height);
+    drawPixelTextInCanvas("game over", gameOverCtx, GameVars.pixelSize, GameVars.gameWdAsPixels / 2, (GameVars.gameHgAsPixels / 2) - 2, "#9bf2fa", 3);
 }
 
 const drawSoundBtn = (force) => {
@@ -191,12 +212,26 @@ const gameLoop = (timeStamp) => {
     oldTimeStamp = timeStamp;
     GameVars.deltaTime = Math.min(secondsPassed, 0.1);
 
-    if (GameVars.deltaTime) {
+    if (GameVars.deltaTime && !game.isGameOver) {
         game.update();
         game.draw();
+        handleGameOverScreen();
     }
     drawSoundBtn();
     window.requestAnimationFrame(gameLoop);
+}
+
+const handleGameOverScreen = () => {
+    if (game.isGameOver && !isShowingFinishMenu) {
+        isShowingFinishMenu = true;
+        gameOverDiv.classList.remove("hidden");
+        timeoutID = setTimeout(() => {
+            isShowingFinishMenu = false;
+            mainMenuDiv.classList.remove("hidden");
+            gameOverDiv.classList.add("hidden");
+            clearTimeout(timeoutID);
+        }, 2000)
+    }
 }
 
 init();
