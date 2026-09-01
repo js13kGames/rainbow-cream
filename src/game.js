@@ -32,6 +32,25 @@ export class Game {
         this.board.cachiers[0].createInteractionBallon();
 
         this.isGameRunning = true;
+
+        this.incomePerSecond = 0;
+        this.prevMoney = this.playerMoney;
+        this.incomeGain = 0;
+        this.incomeTimer = 0;
+    }
+
+    updateIncome() {
+        const delta = GameVars.game.playerMoney - this.prevMoney;
+        if (delta > 0) {
+            this.incomeGain += delta;
+        }
+        this.prevMoney = GameVars.game.playerMoney;
+        this.incomeTimer += GameVars.deltaTime;
+        if (this.incomeTimer >= 1) {
+            this.incomePerSecond = Math.round(this.incomeGain / this.incomeTimer);
+            this.incomeGain = 0;
+            this.incomeTimer -= 1;
+        }
     }
 
     collectIceCreamPayment(customerPatienceLevel) {
@@ -58,14 +77,14 @@ export class Game {
     update() {
         if (this.isGameRunning) {
             this.board.update();
+            this.updateIncome();
+            this.rentTimer += GameVars.deltaTime;
             if (this.rentTimer >= this.rentDuration) {
                 this.rentTimer -= this.rentDuration;
                 this.playerMoney = clamp(this.playerMoney - this.rentCost, 0, this.playerMoney);
                 if (this.playerMoney == 0) {
                     // GAME OVER
                 }
-            } else {
-                this.rentTimer += GameVars.deltaTime;
             }
         }
     }

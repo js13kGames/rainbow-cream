@@ -13,7 +13,7 @@ export class UI {
     }
 
     createFinances() {
-        this.timer = createElem(this.uiDiv, "canvas", null, null, toPixelSize(80), toPixelSize(34));
+        this.timer = createElem(this.uiDiv, "canvas", null, null, toPixelSize(80), toPixelSize(43));
         this.timer.style.translate = (toPixelSize(8)) + 'px ' + (toPixelSize(8)) + 'px';
         this.financesCtx = this.timer.getContext("2d");
         this.drawFinances();
@@ -60,7 +60,7 @@ export class UI {
     }
 
     resize() {
-        setElemSize(this.timer, toPixelSize(80), toPixelSize(34));
+        setElemSize(this.timer, toPixelSize(80), toPixelSize(42));
         this.timer.style.translate = (toPixelSize(8)) + 'px ' + (toPixelSize(8)) + 'px';
 
         setElemSize(this.zoom, toPixelSize(26), toPixelSize(61));
@@ -83,15 +83,18 @@ export class UI {
     }
 
     drawFinances() {
-        genSmallBox(this.financesCtx, 1, 0, 77, 33, toPixelSize(1), "#3e3846", "#1b1116");
+        genSmallBox(this.financesCtx, 1, 0, 77, 42, toPixelSize(1), "#3e3846", "#1b1116");
         genLargeBox(this.financesCtx, 0, 0, 79, 15, toPixelSize(1), "#3e3846", "#1b1116");
         drawPixelTextInCanvas("finances", this.financesCtx, toPixelSize(1), 40, 8, "#00bcd4", 1);
 
         drawPixelTextInCanvas("fonds", this.financesCtx, toPixelSize(1), 14, 21, "#00bcd4", 1);
-        drawPixelTextInCanvas("$" + GameVars.game.playerMoney, this.financesCtx, toPixelSize(1), 50, 21, "#00bcd4", 1);
+        drawPixelTextInCanvas("$" + GameVars.game.playerMoney, this.financesCtx, toPixelSize(1), 52, 21, "#00bcd4", 1);
 
         drawPixelTextInCanvas("rent", this.financesCtx, toPixelSize(1), 12, 29, "#00bcd4", 1);
-        drawPixelTextInCanvas("$-" + GameVars.game.rentCost + "/s", this.financesCtx, toPixelSize(1), 51, 29, "#00bcd4", 1);
+        drawPixelTextInCanvas("$-" + GameVars.game.rentCost + "/s", this.financesCtx, toPixelSize(1), 52, 29, "#00bcd4", 1);
+
+        drawPixelTextInCanvas("income", this.financesCtx, toPixelSize(1), 16, 37, "#00bcd4", 1);
+        drawPixelTextInCanvas("$" + GameVars.game.incomePerSecond + "/s", this.financesCtx, toPixelSize(1), 52, 37, "#00bcd4", 1);
     }
 
     drawResetBtn() {
