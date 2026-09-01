@@ -13,7 +13,9 @@ export class BinTile extends Tile {
     createInteractionBallon() {
         GameVars.game.board.player.moveToBoardPos(this.boardX - 1, this.boardY);
         if (!this.interactionBallon) {
+            GameVars.sound.clickSound();
             this.interactionBallon = createElem(this.gameDiv, "canvas", null, null, toBoardPixelSize(56), toBoardPixelSize(12), null, () => {
+                GameVars.sound.clickSound();
                 GameVars.game.board.player.cleanOrder();
                 this.destroyInteractionBallon();
             });

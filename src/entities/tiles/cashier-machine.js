@@ -27,10 +27,12 @@ export class CashierMachine extends Tile {
     createInteractionBallon() {
         GameVars.game.board.player.moveToBoardPos(this.boardX, this.boardY - 1);
         if (!this.interactionBallon) {
+            GameVars.sound.clickSound();
             this.interactionBallon = createElem(this.gameDiv, "canvas", null, null, toBoardPixelSize(44), toBoardPixelSize(12), null, () => {
                 const availableBalcony = GameVars.game.board.balconies.find(b => !b.customer);
                 this.customer = GameVars.game.board.customers.find(customer => customer.boardX == this.boardX && customer.boardY == this.boardY + 1);
                 if (availableBalcony && this.customer) {
+                    GameVars.sound.clickSound();
                     this.customer.moveToBoardPos(availableBalcony.boardX, this.boardY + 1);
                     this.customer.increasePatience();
                     this.customer = null;

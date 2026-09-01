@@ -36,7 +36,9 @@ export class IceCreamMachine extends Tile {
         const player = GameVars.game.board.player;
         player.moveToBoardPos(this.boardX, this.boardY + 1);
         if (!this.takeIcecream) {
+            GameVars.sound.clickSound();
             this.feedGrain = createElem(this.gameDiv, "canvas", null, null, toBoardPixelSize(61), toBoardPixelSize(10), null, () => {
+                GameVars.sound.clickSound();
                 GameVars.game.pay(this.grainPrice());
                 this.feedAmount = 100;
             });
@@ -45,7 +47,8 @@ export class IceCreamMachine extends Tile {
             drawPixelTextInCanvas("feed grain $-" + this.grainPrice(), feedGrainCtx, toBoardPixelSize(1), 30, 5, "#000000", 1);
 
             this.takeIcecream = createElem(this.gameDiv, "canvas", null, null, toBoardPixelSize(56), toBoardPixelSize(12), null, () => {
-                if (player.hasCone && this.iceCreamAmount > 10) {
+                if (player.hasCone && this.iceCreamAmount > 10 && player.iceCreamColors.length < 3) {
+                    GameVars.sound.clickSound();
                     this.iceCreamAmount = clamp(this.iceCreamAmount - 10, 0, 100);
                     player.collectIceCream(this.iceCreamColor);
                     if (GameVars.game.isTutorial) {
@@ -56,6 +59,8 @@ export class IceCreamMachine extends Tile {
                             GameVars.game.board.balconies.find(b => b.customer)?.createInteractionBallon();
                         }
                     }
+                } else {
+                    GameVars.sound.wrongSound();
                 }
             });
 

@@ -29,8 +29,10 @@ export class Balcony extends Tile {
         const player = GameVars.game.board.player;
         player.moveToBoardPos(this.boardX, this.boardY - 1);
         if (!this.interactionBallon && this.customer) {
+            GameVars.sound.clickSound();
             this.interactionBallon = createElem(this.gameDiv, "canvas", null, null, toBoardPixelSize(56), toBoardPixelSize(12), null, () => {
                 if (this.checkIfOrderIsCorrect(player)) {
+                    GameVars.sound.paySound();
                     GameVars.game.collectIceCreamPayment(this.customer.patienceLevel);
 
                     this.customer.moveToBoardPos(10, 15);
@@ -43,6 +45,8 @@ export class Balcony extends Tile {
                     if (GameVars.game.isTutorial) {
                         GameVars.game.isTutorial = false;
                     }
+                } else {
+                    GameVars.sound.wrongSound();
                 }
             });
 

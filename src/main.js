@@ -21,6 +21,9 @@ let gameBoardDiv;
 
 let game;
 
+let soundBtnCanv;
+let lastSoundState;
+
 let secondsPassed;
 let oldTimeStamp = 0;
 
@@ -39,11 +42,22 @@ const addEventListeners = () => {
     gameBoardDiv.onmousemove = (e) => game.mov(e.pageX, e.pageY);
     gameBoardDiv.onmousedown = (e) => game.click(e.clientX, e.clientY);
     gameBoardDiv.ontouchstart = (e) => game.click(e.touches[0].clientX, e.touches[0].clientY);
+
+    document.onclick = (e) => initAudio();
+    document.ontouchstart = (e) => initAudio();
+
     window.addEventListener("resize", () => {
         GameVars.updatePixelSize(window.innerWidth, window.innerHeight);
         game.resize();
         drawMenus();
     });
+}
+
+const initAudio = () => {
+    if (!GameVars.sound) {
+        GameVars.sound = new Sound();
+        GameVars.sound.initSound();
+    }
 }
 
 const createMainMenu = () => {
@@ -57,12 +71,22 @@ const createMainMenu = () => {
 
     mainMenuBtn = createElem(mainMenuDiv, "canvas", null, null, null, null, null, startGame);
 
+    soundBtnCanv = createElem(mainDiv, "canvas", null, null, null, null, null, null, toogleSound);
+
     drawMenus();
+    drawSoundBtn(true);
 }
 
 const startGame = () => {
+    initAudio();
+    GameVars.sound.clickSound();
     mainMenuDiv.classList.add("hidden");
     game.init();
+}
+
+const toogleSound = () => {
+    initAudio();
+    GameVars.sound?.muteMusic();
 }
 
 const drawMenus = () => {
@@ -146,6 +170,22 @@ const createMainBtnStartBtn = () => {
     drawPixelTextInCanvas("start game", mainMenuBtnCtx, toPixelSize(1), 56, 16, "#9bf2fa", 2);
 }
 
+const drawSoundBtn = (force) => {
+    let isSoundOn = GameVars.sound && GameVars.sound.isSoundOn;
+    if (force || lastSoundState !== isSoundOn) {
+        lastSoundState = isSoundOn;
+        const speakerBtnCtx = soundBtnCanv.getContext("2d");
+
+        setElemSize(soundBtnCanv, toPixelSize(18), toPixelSize(12));
+        soundBtnCanv.style.translate = (GameVars.gameW - soundBtnCanv.width - toPixelSize(8)) + 'px ' + toPixelSize(8) + 'px';
+
+        speakerBtnCtx.clearRect(0, 0, soundBtnCanv.width, soundBtnCanv.height);
+        genSmallBox(speakerBtnCtx, 0, 0, 17, 11, toPixelSize(1), "#9bf2fa", "#1b1116");
+        drawSprite(speakerBtnCtx, SpeakerSprite, toPixelSize(1), 3, 3);
+        isSoundOn && drawSprite(speakerBtnCtx, AudioSprite, toPixelSize(1), 9, 1);
+    }
+}
+
 const gameLoop = (timeStamp) => {
     secondsPassed = (timeStamp - oldTimeStamp) / 1000;
     oldTimeStamp = timeStamp;
@@ -155,7 +195,7 @@ const gameLoop = (timeStamp) => {
         game.update();
         game.draw();
     }
-
+    drawSoundBtn();
     window.requestAnimationFrame(gameLoop);
 }
 

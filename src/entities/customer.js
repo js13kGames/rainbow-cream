@@ -16,6 +16,7 @@ export class Customer {
         this.nextCenterX = this.centerX;
         this.nextCenterY = this.centerY;
 
+        this.moveSoundTimer = 0;
         this.jumpingTimer = 0;
         this.jumpingExtra = 0;
         this.isGoingUp = true;
@@ -60,22 +61,26 @@ export class Customer {
     }
 
     update() {
+        this.productionTimer += GameVars.deltaTime;
         if (this.productionTimer >= 1) {
             this.productionTimer -= 1;
             this.patienceLevel = clamp(this.patienceLevel - this.patienceReduction, 0, 100);
             if (this.patienceLevel == 0) {
                 this.moveToBoardPos(10, 15);
             }
-        } else {
-            this.productionTimer += GameVars.deltaTime;
         }
 
         if (this.isMoving()) {
+            this.jumpingTimer += GameVars.deltaTime;
             if (this.jumpingTimer >= 0.05) {
                 this.jumpingTimer -= 0.05;
                 this.isGoingUp = !this.isGoingUp;
-            } else {
-                this.jumpingTimer += GameVars.deltaTime;
+            }
+
+            this.moveSoundTimer += GameVars.deltaTime;
+            if (this.moveSoundTimer >= 0.1) {
+                this.moveSoundTimer -= 0.1;
+                GameVars.sound.moveSound();
             }
 
             const xdiff = this.nextCenterX - this.centerX;

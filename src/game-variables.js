@@ -27,6 +27,7 @@ const pixelCal = (min, max) => {
 
 let isMobile;
 
+let sound;
 let game;
 let deltaTime;
 
@@ -47,6 +48,7 @@ let gameHgAsPixels;
 export const GameVars = {
     isMobile,
 
+    sound,
     game,
     deltaTime,
 

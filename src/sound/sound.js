@@ -19,25 +19,24 @@ export class Sound {
     }
 
     clickSound() {
-        this.playSound("triangle", 174.6, 0.5, 0, 0.2);
+        this.playSound("triangle", 174.6, 0.2, 0, 0.2);
     }
 
     moveSound() {
-        this.playSound("triangle", 110, 0.8, 0, 0.1);
+        this.playSound("triangle", 110, 0.2, 0, 0.1);
     }
 
-    playerDeadSound() {
-        this.playSound("square", 18.35, 0.1, 0, 0.1);
-        this.playSound("square", 36.71, 0.1, 0.1, 0.2);
-        this.playSound("square", 73.42, 0.1, 0.2, 0.2);
+    wrongSound() {
+        this.playSound("square", 32.70, 0.12, 0, 0.1);
+        this.playSound("square", 16.35, 0.25, 0.1, 0.2);
     }
 
-    victorySound() {
-        this.playSound("square", 932.3, 0.2, 0, 0.1);
-        this.playSound("square", 1865, 0.2, 0.1, 0.2);
+    paySound() {
+        this.playSound("square", 932.3, 0.1, 0, 0.1);
+        this.playSound("square", 1865, 0.1, 0.1, 0.2);
     }
 
-    playOverSound() {
+    gameOverSound() {
         this.playSound("square", 32.70, 0.3, 0, 0.1);
         this.playSound("square", 36.71, 0.2, 0.1, 0.2);
         this.playSound("square", 16.35, 0.3, 0.2, 0.1);
@@ -63,10 +62,10 @@ export class Sound {
 
     playMusic() {
         if (this.isSoundOn && this.isSoundInitialized && this.ctx.state == "running") {
-            this.playSound("sine", mB[this.noteCount[0]], 0.8, 0, 0.8);
+            this.playSound("sine", mB[this.noteCount[0]], 0.3, 0, 0.8);
             this.updateNoteCount(0, mB);
 
-            this.playSound("square", mR[this.noteCount[1]], 0.02, 0, 0.8);
+            this.playSound("triangle", mR[this.noteCount[1]], 0.3, 0, 0.2);
             this.updateNoteCount(1, mR);
         }
     }
@@ -78,31 +77,15 @@ export class Sound {
 }
 
 const mB = [
-    61.74, null, 61.74, null, null, null, null, null,
-    61.74, null, null, null, null, null, null, null,
+    69.3, null, null, 69.3, 103.83, null, null, 92.5,
+    null, null, null, 92.5, 69.3, null, 41.2, 46.25,
+    61.74, null, null, 61.74, 92.5, null, null, 82.41,
+    null, null, null, 82.41, 82.41, null, 61.74, 65.41,
 ];
 
 const mR = [
-    null, null, null, null, 123.47, null, null, null,
-    null, null, null, null, null, null, null, null,
-    null, null, null, null, 123.47, null, null, null,
-    null, null, null, null, null, null, null, null,
-    61.74, null, null, null, 61.74, null, null, null,
-    61.74, null, null, null, 61.74, null, 123.47, null,
-    61.74, null, 123.47, null, 61.74, null, 123.47, null,
-    61.74, null, 123.47, null, 61.74, null, 123.47, null,
-    110, null, 98, null, 110, null, 123.47, null,
-    110, null, 98, null, 110, null, 123.47, 98,
-    null, null, null, null, null, null, null, null,
-    null, null, null, null, null, null, null, null,
-    null, null, null, null, 123.47, null, null, null,
-    null, null, null, null, null, null, null, null,
-    61.74, null, null, null, 61.74, null, null, null,
-    61.74, null, null, null, 61.74, null, 123.47, null,
-    61.74, null, 123.47, null, 61.74, null, 123.47, null,
-    61.74, null, 123.47, null, 61.74, null, 123.47, null,
-    110, null, 98, null, 110, null, 123.47, null,
-    110, null, 98, null, 110, null, 246.94, 123.47,
-    61.74, null, null, null, 61.74, null, null, null,
-    61.74, null, null, null, 61.74, null, null, null,
+    164.81, null, 164.81, null, null, 164.81, null, 138.59,
+    null, 138.59, null, null, 138.59, null, 138.59, null,
+    116.54, null, 116.54, null, null, 116.54, null, 103.83,
+    null, 103.83, null, null, 103.83, null, 103.83, null,
 ];

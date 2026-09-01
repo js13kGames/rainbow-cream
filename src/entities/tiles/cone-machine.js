@@ -30,7 +30,9 @@ export class ConeMachine extends Tile {
         const player = GameVars.game.board.player;
         player.moveToBoardPos(this.boardX, this.boardY + 1);
         if (!this.takeCone) {
+            GameVars.sound.clickSound();
             this.buyFlour = createElem(this.gameDiv, "canvas", null, null, toBoardPixelSize(62), toBoardPixelSize(10), null, () => {
+                GameVars.sound.clickSound();
                 GameVars.game.board.player.moveToBoardPos(this.boardX, this.boardY + 1);
                 GameVars.game.pay(this.flourPrice());
                 this.flourAmount = 100;
@@ -41,12 +43,15 @@ export class ConeMachine extends Tile {
 
             this.takeCone = createElem(this.gameDiv, "canvas", null, null, toBoardPixelSize(44), toBoardPixelSize(12), null, () => {
                 if (!player.hasCone && this.flourAmount > 0) {
+                    GameVars.sound.clickSound();
                     this.flourAmount = clamp(this.flourAmount - 10, 0, 100);
                     player.collectCone();
                     this.destroyInteractionBallon();
                     if (GameVars.game.isTutorial) {
                         GameVars.game.board.iceCreamMachine[ColorType.BLUE].createInteractionBallon();
                     }
+                } else {
+                    GameVars.sound.wrongSound();
                 }
             });
 

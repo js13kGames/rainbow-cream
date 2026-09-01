@@ -17,6 +17,7 @@ export class Player {
         this.nextCenterX = this.centerX;
         this.nextCenterY = this.centerY;
 
+        this.moveSoundTimer = 0;
         this.jumpingTimer = 0;
         this.jumpingExtra = 0;
         this.isGoingUp = true;
@@ -50,11 +51,16 @@ export class Player {
 
     update() {
         if (this.isMoving()) {
+            this.jumpingTimer += GameVars.deltaTime;
             if (this.jumpingTimer >= 0.05) {
                 this.jumpingTimer -= 0.05;
                 this.isGoingUp = !this.isGoingUp;
-            } else {
-                this.jumpingTimer += GameVars.deltaTime;
+            }
+
+            this.moveSoundTimer += GameVars.deltaTime;
+            if (this.moveSoundTimer >= 0.1) {
+                this.moveSoundTimer -= 0.1;
+                GameVars.sound.moveSound();
             }
 
             const xdiff = this.nextCenterX - this.centerX;
