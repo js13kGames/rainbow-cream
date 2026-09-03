@@ -129,10 +129,31 @@ const retrievePixelLetter = (letter) => {
         case '9':
             return nin;
 
+        case '{':
+            return play;
+        case '}':
+            return pause;
+
         default:
             return space;
     }
 };
+
+const play = [
+    [true, false, false],
+    [true, true, false],
+    [true, true, true],
+    [true, true, false],
+    [true, false, false]
+];
+
+const pause = [
+    [true, false, true],
+    [true, false, true],
+    [true, false, true],
+    [true, false, true],
+    [true, false, true]
+];
 
 const space = [
     [false],

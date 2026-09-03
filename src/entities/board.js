@@ -35,6 +35,11 @@ export class Board {
 
         this.initBasicGameComponents();
         this.customers = [new Customer(6, 10, this.boardCtx)];
+        this.customers[0].flavoursColors = [ColorType.BLUE, ColorType.YELLOW, ColorType.RED];
+
+        this.iceCreamWorkers = [];
+        this.orderWorkers = [];
+        this.supplyWorker = [];
 
         this.player = new Player(6, 8, this.boardCtx);
 
@@ -65,7 +70,7 @@ export class Board {
     setGameBoardCanvas() {
         setElemSize(this.boardCanvas,
             toBoardPixelSize(GameVars.tileSize * GameVars.gameBoardSize),
-            toBoardPixelSize((GameVars.tileSize / 2) + (GameVars.tileSize * GameVars.gameBoardSize))
+            toBoardPixelSize((GameVars.tileSize * GameVars.gameBoardSize) - (GameVars.tileSize * 2))
         );
     }
 
@@ -85,6 +90,7 @@ export class Board {
         this.balconies = [];
         this.coneMachines = [];
         this.iceCreamMachine = {};
+        this.bin = null;
 
         const startY = (this.boardTiles.length / 2) - 4;
         const startX = (this.boardTiles[0].length / 2) - 3;
@@ -109,6 +115,7 @@ export class Board {
                     this.iceCreamMachine[ColorType.RED] = this.boardTiles[y][x];
                 } else if (y == startY + 3 && x == startX + 4) {
                     this.boardTiles[y][x] = generateTile(x + 1, y + 1, TileType.BIN, this.boardCtx);
+                    this.bin = this.boardTiles[y][x];
                 } else if (y == startY + 5 && x == startX + 1) {
                     this.boardTiles[y][x] = generateTile(x + 1, y + 1, TileType.CASHIER, this.boardCtx);
                     this.cachiers.push(this.boardTiles[y][x]);
@@ -181,7 +188,7 @@ export class Board {
         }
         this.customers.forEach(c => c.update());
 
-        if (!GameVars.game.isTutorial) {
+        if (!GameVars.game.isTutorial && GameVars.game.management.getMaxFlavours() > 0) {
             if (!this.customers.find(c => c.boardY == 14)) {
                 if (this.customerSpawnTimer >= this.customerNextSpawn) {
                     this.customerSpawnTimer -= this.customerNextSpawn;
@@ -199,6 +206,7 @@ export class Board {
             }
         });
         this.player.update();
+        this.iceCreamWorkers.forEach(e => e.update());
     }
 
     draw() {
@@ -209,6 +217,7 @@ export class Board {
                 this.boardTiles[y][x].drawMiddle();
             }
             if (y == this.player.boardY - 1) this.player.draw();
+            this.iceCreamWorkers.forEach(e => y == e.boardY - 1 && e.draw());
         }
         this.customers.forEach(c => c.draw());
     }

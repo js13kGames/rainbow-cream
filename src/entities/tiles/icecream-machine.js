@@ -34,33 +34,37 @@ export class IceCreamMachine extends Tile {
 
     createInteractionBallon() {
         const player = GameVars.game.board.player;
-        player.moveToBoardPos(this.boardX, this.boardY + 1);
+        if (!GameVars.game.pause) player.moveToBoardPos(this.boardX, this.boardY + 1);
         if (!this.takeIcecream) {
             GameVars.sound.clickSound();
             this.feedGrain = createElem(this.gameDiv, "canvas", null, null, toBoardPixelSize(61), toBoardPixelSize(10), null, () => {
-                GameVars.sound.clickSound();
-                GameVars.game.pay(this.grainPrice());
-                this.feedAmount = 100;
+                if (!GameVars.game.pause) {
+                    GameVars.sound.clickSound();
+                    GameVars.game.pay(this.grainPrice());
+                    this.feedAmount = 100;
+                }
             });
             const feedGrainCtx = this.feedGrain.getContext("2d");
             genSmallBox(feedGrainCtx, 0, 0, 60, 9, toBoardPixelSize(1), "#000000", "#ffffff");
             drawPixelTextInCanvas("feed grain $-" + this.grainPrice(), feedGrainCtx, toBoardPixelSize(1), 30, 5, "#000000", 1);
 
             this.takeIcecream = createElem(this.gameDiv, "canvas", null, null, toBoardPixelSize(56), toBoardPixelSize(12), null, () => {
-                if (player.hasCone && this.iceCreamAmount > 10 && player.iceCreamColors.length < 3) {
-                    GameVars.sound.clickSound();
-                    this.iceCreamAmount = clamp(this.iceCreamAmount - 10, 0, 100);
-                    player.collectIceCream(this.iceCreamColor);
-                    if (GameVars.game.isTutorial) {
-                        this.destroyInteractionBallon();
-                        if (player.iceCreamColors.length == 1) this.activateTutorialIceCreamMachine(ColorType.YELLOW);
-                        else if (player.iceCreamColors.length == 2) this.activateTutorialIceCreamMachine(ColorType.RED);
-                        else if (player.iceCreamColors.length == 3) {
-                            GameVars.game.board.balconies.find(b => b.customer)?.createInteractionBallon();
+                if (!GameVars.game.pause) {
+                    if (player.hasCone && this.iceCreamAmount > 10 && player.iceCreamColors.length < 3) {
+                        GameVars.sound.clickSound();
+                        this.iceCreamAmount = clamp(this.iceCreamAmount - 10, 0, 100);
+                        player.collectIceCream(this.iceCreamColor);
+                        if (GameVars.game.isTutorial) {
+                            this.destroyInteractionBallon();
+                            if (player.iceCreamColors.length == 1) this.activateTutorialIceCreamMachine(ColorType.YELLOW);
+                            else if (player.iceCreamColors.length == 2) this.activateTutorialIceCreamMachine(ColorType.RED);
+                            else if (player.iceCreamColors.length == 3) {
+                                GameVars.game.board.balconies.find(b => b.customer)?.createInteractionBallon();
+                            }
                         }
+                    } else {
+                        GameVars.sound.wrongSound();
                     }
-                } else {
-                    GameVars.sound.wrongSound();
                 }
             });
 

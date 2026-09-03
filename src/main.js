@@ -17,7 +17,6 @@ let mainMenuCanv;
 let mainMenuBtn;
 
 let gameDiv;
-let gameBoardDiv;
 
 let gameOverDiv;
 let gameOverCanv;
@@ -37,17 +36,13 @@ const init = () => {
 
     createMainMenu();
 
-    game = new Game(gameBoardDiv);
+    game = new Game();
 
     addEventListeners();
     window.requestAnimationFrame(() => gameLoop());
 }
 
 const addEventListeners = () => {
-    gameBoardDiv.onmousemove = (e) => game.mov(e.pageX, e.pageY);
-    gameBoardDiv.onmousedown = (e) => game.click(e.clientX, e.clientY);
-    gameBoardDiv.ontouchstart = (e) => game.click(e.touches[0].clientX, e.touches[0].clientY);
-
     document.onclick = (e) => initAudio();
     document.ontouchstart = (e) => initAudio();
 
@@ -55,6 +50,7 @@ const addEventListeners = () => {
         GameVars.updatePixelSize(window.innerWidth, window.innerHeight);
         game.resize();
         drawMenus();
+        drawSoundBtn(true);
     });
 }
 
@@ -69,7 +65,6 @@ const createMainMenu = () => {
     mainDiv = document.getElementById("main");
 
     gameDiv = createElem(mainDiv, "div", "game");
-    gameBoardDiv = createElem(gameDiv, "div", "board-div");
 
     mainMenuDiv = createElem(mainDiv, "div", "main-menu");
     mainMenuCanv = createElem(mainMenuDiv, "canvas");
@@ -89,7 +84,13 @@ const startGame = () => {
     initAudio();
     GameVars.sound.clickSound();
     mainMenuDiv.classList.add("hidden");
-    game.init();
+
+    const gameBoardDiv = createElem(gameDiv, "div", "board-div")
+    gameBoardDiv.onmousemove = (e) => game.mov(e.pageX, e.pageY);
+    gameBoardDiv.onmousedown = (e) => game.click(e.clientX, e.clientY);
+    gameBoardDiv.ontouchstart = (e) => game.click(e.touches[0].clientX, e.touches[0].clientY);
+
+    game.init(gameBoardDiv);
 }
 
 const toogleSound = () => {
@@ -198,7 +199,7 @@ const drawSoundBtn = (force) => {
         const speakerBtnCtx = soundBtnCanv.getContext("2d");
 
         setElemSize(soundBtnCanv, toPixelSize(18), toPixelSize(12));
-        soundBtnCanv.style.translate = (GameVars.gameW - soundBtnCanv.width - toPixelSize(8)) + 'px ' + toPixelSize(8) + 'px';
+        soundBtnCanv.style.translate = toPixelSize(8) + 'px ' + (GameVars.gameH - soundBtnCanv.height - toPixelSize(8)) + 'px';
 
         speakerBtnCtx.clearRect(0, 0, soundBtnCanv.width, soundBtnCanv.height);
         genSmallBox(speakerBtnCtx, 0, 0, 17, 11, toPixelSize(1), "#9bf2fa", "#1b1116");
@@ -229,6 +230,7 @@ const handleGameOverScreen = () => {
             isShowingFinishMenu = false;
             mainMenuDiv.classList.remove("hidden");
             gameOverDiv.classList.add("hidden");
+            gameDiv.innerHTML = "";
             clearTimeout(timeoutID);
         }, 2000)
     }

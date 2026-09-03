@@ -22,13 +22,15 @@ export class Customer {
         this.isGoingUp = true;
 
         this.ctx = ctx;
-        this.flavoursAmount = GameVars.game.isTutorial ? 2 : randomNumb(3);
+        this.flavoursAmount = GameVars.game.isTutorial ? 2 : randomNumb(GameVars.game.management.getMaxFlavours());
         this.flavoursColors = this.createIceCreamColors();
         this.patienceLevel = 100;
         this.patienceReduction = randomNumbOnRange(1, 4);
         this.productionTimer = 0;
 
         this.customerColor = CharacterColor[randomNumb(CharacterColor.length)];
+
+        this.isOrderCompleted = false;
     }
 
     increasePatience() {
@@ -39,20 +41,32 @@ export class Customer {
         switch (this.flavoursAmount) {
             case 0: return this.createOneColorIceCream();
             case 1: return this.createTwoColorsIceCream();
-            case 2: return [ColorType.BLUE, ColorType.YELLOW, ColorType.RED];;
+            case 2: return this.createThreeColorsIceCream();
         }
     }
 
     createOneColorIceCream() {
-        const randomColor = randomNumb(3);
+        let randomColor = randomNumb(3);
+        while (!GameVars.game.management.isActiveFlavour(randomColor)) randomColor = randomNumb(3);
         return [randomColor, randomColor, randomColor];
     }
 
     createTwoColorsIceCream() {
-        const randomColor1 = randomNumb(3);
+        let randomColor1 = randomNumb(3);
+        while (!GameVars.game.management.isActiveFlavour(randomColor1)) randomColor1 = randomNumb(3);
         let randomColor2 = randomNumb(3);
-        while (randomColor2 == randomColor1) randomColor2 = randomNumb(3);
+        while (randomColor2 == randomColor1 || !GameVars.game.management.isActiveFlavour(randomColor2)) randomColor2 = randomNumb(3);
         return [randomColor1, randomColor2, randomColor2];
+    }
+
+    createThreeColorsIceCream() {
+        let randomColor1 = randomNumb(3);
+        while (!GameVars.game.management.isActiveFlavour(randomColor1)) randomColor1 = randomNumb(3);
+        let randomColor2 = randomNumb(3);
+        while (randomColor2 == randomColor1 || !GameVars.game.management.isActiveFlavour(randomColor2)) randomColor2 = randomNumb(3);
+        let randomColor3 = randomNumb(3);
+        while (randomColor3 == randomColor1 || randomColor3 == randomColor2) randomColor3 = randomNumb(3);
+        return [randomColor1, randomColor2, randomColor3];
     }
 
     moveToBoardPos(boardX, boardY) {

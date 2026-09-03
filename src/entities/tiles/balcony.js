@@ -27,26 +27,19 @@ export class Balcony extends Tile {
 
     createInteractionBallon() {
         const player = GameVars.game.board.player;
-        player.moveToBoardPos(this.boardX, this.boardY - 1);
+        if (!GameVars.game.pause) player.moveToBoardPos(this.boardX, this.boardY - 1);
         if (!this.interactionBallon && this.customer) {
             GameVars.sound.clickSound();
             this.interactionBallon = createElem(this.gameDiv, "canvas", null, null, toBoardPixelSize(56), toBoardPixelSize(12), null, () => {
-                if (this.checkIfOrderIsCorrect(player)) {
-                    GameVars.sound.paySound();
-                    GameVars.game.collectIceCreamPayment(this.customer.patienceLevel);
-
-                    this.customer.moveToBoardPos(10, 15);
-                    this.customer = null;
-
-                    player.cleanOrder();
-
-                    this.destroyInteractionBallon();
-
-                    if (GameVars.game.isTutorial) {
-                        GameVars.game.isTutorial = false;
+                if (!GameVars.game.pause) {
+                    if (this.checkIfOrderIsCorrect(player)) {
+                        this.processDelivery(player);
+                        if (GameVars.game.isTutorial) {
+                            GameVars.game.isTutorial = false;
+                        }
+                    } else {
+                        GameVars.sound.wrongSound();
                     }
-                } else {
-                    GameVars.sound.wrongSound();
                 }
             });
 
@@ -54,15 +47,28 @@ export class Balcony extends Tile {
             const ctx = this.interactionBallon.getContext("2d");
 
             genSmallBox(ctx, 0, 0, 53, 9, toBoardPixelSize(1), "#000000", "#ffffff");
-            drawPixelTextInCanvas("complete $" + GameVars.game.getIceCreamCost(this.customer.patienceLevel), ctx, toBoardPixelSize(1), 27, 5, "#000000", 1);
+            drawPixelTextInCanvas("complete $" + GameVars.game.getIceCreamCost(this.customer), ctx, toBoardPixelSize(1), 27, 5, "#000000", 1);
             genSmallBox(ctx, 52, 8, 3, 3, toBoardPixelSize(1), "#000000", "#ffffff");
         }
     }
 
-    checkIfOrderIsCorrect(player) {
-        if (player.iceCreamColors.length < 3) return false;
-        for (let i = 0; i < player.iceCreamColors.length; i++) {
-            if (player.iceCreamColors[i] != this.customer.flavoursColors[i]) return false;
+    processDelivery(entity) {
+        GameVars.sound.paySound();
+        GameVars.game.collectIceCreamPayment(this.customer);
+
+        this.customer.isOrderCompleted = true;
+        this.customer.moveToBoardPos(10, 15);
+        this.customer = null;
+
+        entity.cleanOrder();
+
+        this.destroyInteractionBallon();
+    }
+
+    checkIfOrderIsCorrect(entity) {
+        if (entity.iceCreamColors.length < 3) return false;
+        for (let i = 0; i < entity.iceCreamColors.length; i++) {
+            if (entity.iceCreamColors[i] != this.customer.flavoursColors[i]) return false;
         }
         return true;
     }
@@ -80,13 +86,14 @@ export class Balcony extends Tile {
     }
 
     update() {
-        this.customer = GameVars.game.board.customers.find(customer => customer.boardX == this.boardX && customer.boardY == this.boardY + 1);
+        this.customer = GameVars.game.board.customers.find(customer => customer.boardX == this.boardX &&
+            customer.boardY == this.boardY + 1 && !customer.isOrderCompleted);
         if (this.customer) {
             this.setIceScreamColors(this.customer.flavoursAmount, this.customer.flavoursColors);
             if (GameVars.game.isTutorial && !GameVars.game.board.player.hasCone) {
                 GameVars.game.board.coneMachines[0].createInteractionBallon();
             }
-            const newIceCreamCost = GameVars.game.getIceCreamCost(this.customer.patienceLevel);
+            const newIceCreamCost = GameVars.game.getIceCreamCost(this.customer);
             if (this.interactionBallon && this.iceCreamCost != newIceCreamCost) {
                 this.destroyInteractionBallon();
                 this.createInteractionBallon();
@@ -106,7 +113,7 @@ export class Balcony extends Tile {
         switch (flavoursAmount) {
             case 0: return this.createOneColorIceCream(iceCreamColors);
             case 1: return this.createTwoColorsIceCream(iceCreamColors);
-            case 2: return this.createThreeColorsIceCream();
+            case 2: return this.createThreeColorsIceCream(iceCreamColors);
         }
     }
 
@@ -126,11 +133,11 @@ export class Balcony extends Tile {
         };
     }
 
-    createThreeColorsIceCream() {
+    createThreeColorsIceCream(iceCreamColors) {
         return {
-            "lc1": getLightColorByType(ColorType.BLUE), "dc1": getDarkColorByType(ColorType.BLUE),
-            "lc2": getLightColorByType(ColorType.YELLOW), "dc2": getDarkColorByType(ColorType.YELLOW),
-            "lc3": getLightColorByType(ColorType.RED), "dc3": getDarkColorByType(ColorType.RED),
+            "lc1": getLightColorByType(iceCreamColors[0]), "dc1": getDarkColorByType(iceCreamColors[0]),
+            "lc2": getLightColorByType(iceCreamColors[1]), "dc2": getDarkColorByType(iceCreamColors[1]),
+            "lc3": getLightColorByType(iceCreamColors[2]), "dc3": getDarkColorByType(iceCreamColors[2]),
         };
     }
 

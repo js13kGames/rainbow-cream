@@ -1,21 +1,21 @@
 import { Board } from "./entities/board";
 import { UI } from "./entities/ui/ui";
 import { GameVars } from "./game-variables";
-import { clamp } from "./utilities/general-utilities";
+import { Management } from "./management";
+import { clamp, randomNumb, randomNumbOnRange } from "./utilities/general-utilities";
 
 export class Game {
-    constructor(gameDiv) {
-        this.gameDiv = gameDiv;
-    }
-
-    init() {
+    init(gameBoardDiv) {
+        this.gameBoardDiv = gameBoardDiv;
         GameVars.boardPixelSize = GameVars.pixelSize;
-        this.gameDiv.innerHTML = "";
 
         GameVars.game = this;
 
         this.isTutorial = true;
         this.playerMoney = 500;
+        this.reputation = 50;
+
+        this.gameChangeDuration = 10;
 
         this.rentCost = 4;
         this.rentDuration = 1;
@@ -24,43 +24,25 @@ export class Game {
         this.flourCost = 100;
         this.grainCost = 100;
 
-        this.iceCreamCost = 100;
-
-        this.board = new Board(this.gameDiv);
+        this.management = new Management();
+        this.board = new Board(this.gameBoardDiv);
         this.ui = new UI(this);
 
         this.board.cachiers[0].createInteractionBallon();
 
         this.isGameRunning = true;
         this.isGameOver = false;
-
-        this.incomePerSecond = 0;
-        this.prevMoney = this.playerMoney;
-        this.incomeGain = 0;
-        this.incomeTimer = 0;
+        this.pause = false;
     }
 
-    updateIncome() {
-        const delta = GameVars.game.playerMoney - this.prevMoney;
-        if (delta > 0) {
-            this.incomeGain += delta;
-        }
-        this.prevMoney = GameVars.game.playerMoney;
-        this.incomeTimer += GameVars.deltaTime;
-        if (this.incomeTimer >= 1) {
-            this.incomePerSecond = Math.round(this.incomeGain / this.incomeTimer);
-            this.incomeGain = 0;
-            this.incomeTimer -= 1;
-        }
+    collectIceCreamPayment(customer) {
+        this.playerMoney += this.getIceCreamCost(customer);
     }
 
-    collectIceCreamPayment(customerPatienceLevel) {
-        this.playerMoney += this.getIceCreamCost(customerPatienceLevel);
-    }
-
-    getIceCreamCost(customerPatienceLevel) {
-        const tipLevel = customerPatienceLevel < 33 ? 0 : customerPatienceLevel < 66 ? 1 : 2;
-        return Math.round(this.iceCreamCost + (tipLevel * this.iceCreamCost / 4));
+    getIceCreamCost(customer) {
+        const tipLevel = customer.patienceLevel < 33 ? 0 : customer.patienceLevel < 66 ? 1 : 2;
+        const iceCreamCost = this.management.getFlavoursCost(customer.flavoursAmount);
+        return Math.round(iceCreamCost + (tipLevel * iceCreamCost / 4));
     }
 
     pay(amount) {
@@ -76,9 +58,9 @@ export class Game {
     }
 
     update() {
-        if (this.isGameRunning) {
+        if (this.isGameRunning && !this.pause) {
             this.board.update();
-            this.updateIncome();
+            this.management.update();
             this.rentTimer += GameVars.deltaTime;
             if (this.rentTimer >= this.rentDuration) {
                 this.rentTimer -= this.rentDuration;
@@ -87,6 +69,13 @@ export class Game {
                     this.isGameRunning = false;
                     this.isGameOver = true;
                 }
+            }
+            this.gameChangeDuration -= GameVars.deltaTime;
+            if (this.gameChangeDuration <= 0) {
+                this.gameChangeDuration = randomNumbOnRange(10, 20);
+                this.rentCost = randomNumbOnRange(2, 6);
+                this.flourCost = randomNumbOnRange(50, 150);
+                this.grainCost = randomNumbOnRange(50, 150);
             }
         }
     }

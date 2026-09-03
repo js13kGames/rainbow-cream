@@ -28,30 +28,34 @@ export class ConeMachine extends Tile {
 
     createInteractionBallon() {
         const player = GameVars.game.board.player;
-        player.moveToBoardPos(this.boardX, this.boardY + 1);
+        if (!GameVars.game.pause) player.moveToBoardPos(this.boardX, this.boardY + 1);
         if (!this.takeCone) {
             GameVars.sound.clickSound();
             this.buyFlour = createElem(this.gameDiv, "canvas", null, null, toBoardPixelSize(62), toBoardPixelSize(10), null, () => {
-                GameVars.sound.clickSound();
-                GameVars.game.board.player.moveToBoardPos(this.boardX, this.boardY + 1);
-                GameVars.game.pay(this.flourPrice());
-                this.flourAmount = 100;
+                if (!GameVars.game.pause) {
+                    GameVars.sound.clickSound();
+                    GameVars.game.board.player.moveToBoardPos(this.boardX, this.boardY + 1);
+                    GameVars.game.pay(this.flourPrice());
+                    this.flourAmount = 100;
+                }
             });
             const buyFlourCtx = this.buyFlour.getContext("2d");
             genSmallBox(buyFlourCtx, 0, 0, 60, 9, toBoardPixelSize(1), "#000000", "#ffffff");
             drawPixelTextInCanvas("add flour $-" + this.flourPrice(), buyFlourCtx, toBoardPixelSize(1), 31, 5, "#000000", 1);
 
             this.takeCone = createElem(this.gameDiv, "canvas", null, null, toBoardPixelSize(44), toBoardPixelSize(12), null, () => {
-                if (!player.hasCone && this.flourAmount > 0) {
-                    GameVars.sound.clickSound();
-                    this.flourAmount = clamp(this.flourAmount - 10, 0, 100);
-                    player.collectCone();
-                    this.destroyInteractionBallon();
-                    if (GameVars.game.isTutorial) {
-                        GameVars.game.board.iceCreamMachine[ColorType.BLUE].createInteractionBallon();
+                if (!GameVars.game.pause) {
+                    if (!player.hasCone && this.flourAmount >= 10) {
+                        GameVars.sound.clickSound();
+                        this.flourAmount = clamp(this.flourAmount - 10, 0, 100);
+                        player.collectCone();
+                        this.destroyInteractionBallon();
+                        if (GameVars.game.isTutorial) {
+                            GameVars.game.board.iceCreamMachine[ColorType.BLUE].createInteractionBallon();
+                        }
+                    } else {
+                        GameVars.sound.wrongSound();
                     }
-                } else {
-                    GameVars.sound.wrongSound();
                 }
             });
 
