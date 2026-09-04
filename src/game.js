@@ -36,13 +36,25 @@ export class Game {
     }
 
     collectIceCreamPayment(customer) {
+        this.updateReputation(customer);
         this.playerMoney += this.getIceCreamCost(customer);
     }
 
+    updateReputation(customer) {
+        const tipLevel = this.getTipLevel(customer.patienceLevel);
+        if (tipLevel == 0) this.reputation--;
+        else if (tipLevel == 2) this.reputation++;
+        this.reputation = clamp(this.reputation, 0, 100);
+    }
+
     getIceCreamCost(customer) {
-        const tipLevel = customer.patienceLevel < 33 ? 0 : customer.patienceLevel < 66 ? 1 : 2;
+        const tipLevel = this.getTipLevel(customer.patienceLevel);
         const iceCreamCost = this.management.getFlavoursCost(customer.flavoursAmount);
         return Math.round(iceCreamCost + (tipLevel * iceCreamCost / 4));
+    }
+
+    getTipLevel(patienceLevel) {
+        return patienceLevel < 33 ? 0 : patienceLevel < 66 ? 1 : 2;
     }
 
     pay(amount) {

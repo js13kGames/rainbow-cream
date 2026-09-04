@@ -1,6 +1,8 @@
+import { ColorType, getLightColorByType, getRangeColor } from "../../enum/color-type.js";
 import { GameVars, toPixelSize } from "../../game-variables";
 import { genLargeBox, genSmallBox } from "../../utilities/box-generator";
 import { createElem, setElemSize } from "../../utilities/elem-utilities";
+import { clamp } from "../../utilities/general-utilities.js";
 import { drawPixelTextInCanvas } from "../../utilities/text";
 import { ManagementUI } from "./management-ui.js";
 
@@ -63,10 +65,7 @@ export class UI {
     }
 
     resize() {
-        const board = this.game.board;
-        const hasWorkers = board.iceCreamWorkers.length > 0 || board.cashierWorkers.length > 0 || board.supplyWorkers.length > 0;
-        const amountOfFinances = 2 + (hasWorkers ? 1 : 0);
-        setElemSize(this.financesCanv, toPixelSize(80), toPixelSize(16 + (amountOfFinances * 14)));
+        setElemSize(this.financesCanv, toPixelSize(80), toPixelSize(64));
         this.financesCanv.style.translate = (GameVars.gameW - this.financesCanv.width - toPixelSize(8)) + 'px ' + (toPixelSize(8)) + 'px';
 
         setElemSize(this.pauseCanv, toPixelSize(60), toPixelSize(20));
@@ -116,20 +115,28 @@ export class UI {
 
         const board = this.game.board;
         const hasWorkers = board.iceCreamWorkers.length > 0 || board.cashierWorkers.length > 0 || board.supplyWorkers.length > 0;
-        const amountOfFinances = 2 + (hasWorkers ? 1 : 0);
-        genSmallBox(this.financesCtx, 0, 0, 79, 15 + (amountOfFinances * 9), toPixelSize(1), "#3e3846", "#1b1116");
+        const amountOfFinances = 3 + (hasWorkers ? 1 : 0);
+        genSmallBox(this.financesCtx, 0, 0, 79, 63, toPixelSize(1), "#3e3846", "#1b1116");
         drawPixelTextInCanvas("finances", this.financesCtx, toPixelSize(1), 40, 8, "#00bcd4", 1);
 
-        drawPixelTextInCanvas("funds", this.financesCtx, toPixelSize(1), 14, 19, "#00bcd4", 1);
-        drawPixelTextInCanvas("$" + GameVars.game.playerMoney, this.financesCtx, toPixelSize(1), 52, 19, "#00bcd4", 1);
+        drawPixelTextInCanvas("reputation", this.financesCtx, toPixelSize(1), 22, 17, "#00bcd4", 1);
+        genSmallBox(this.financesCtx, 43, 14, 32, 5, toPixelSize(1), "#3e3846", "#1b1116");
+        genSmallBox(this.financesCtx, 43, 14, clamp((32 * this.game.reputation) / 100, 0, 32), 5, toPixelSize(1), "#00000000", getRangeColor(this.game.reputation));
 
-        drawPixelTextInCanvas("rent", this.financesCtx, toPixelSize(1), 12, 27, "#00bcd4", 1);
-        drawPixelTextInCanvas("$-" + GameVars.game.rentCost + "/s", this.financesCtx, toPixelSize(1), 52, 27, "#00bcd4", 1);
+        drawPixelTextInCanvas("funds", this.financesCtx, toPixelSize(1), 13, 25, "#00bcd4", 1);
+        drawPixelTextInCanvas("$" + GameVars.game.playerMoney, this.financesCtx, toPixelSize(1), 60, 25, GameVars.game.playerMoney < 100 ? getRangeColor(ColorType.RED) : "#00bcd4", 1);
 
-        if (hasWorkers) {
-            drawPixelTextInCanvas("workers", this.financesCtx, toPixelSize(1), 19, 35, "#00bcd4", 1);
-            drawPixelTextInCanvas("$-" + GameVars.game.management.getStaffPaymentCost() + "/s", this.financesCtx, toPixelSize(1), 52, 35, "#00bcd4", 1);
-        }
+        drawPixelTextInCanvas("rent", this.financesCtx, toPixelSize(1), 11, 33, "#00bcd4", 1);
+        drawPixelTextInCanvas("$-" + GameVars.game.rentCost + "/s", this.financesCtx, toPixelSize(1), 61, 33, "#00bcd4", 1);
+
+        drawPixelTextInCanvas("workers", this.financesCtx, toPixelSize(1), 18, 41, "#00bcd4", 1);
+        drawPixelTextInCanvas("$-" + GameVars.game.management.getStaffPaymentCost() + "/s", this.financesCtx, toPixelSize(1), 61, 41, "#00bcd4", 1);
+
+        drawPixelTextInCanvas("flour price", this.financesCtx, toPixelSize(1), 23, 49, "#00bcd4", 1);
+        drawPixelTextInCanvas("$" + (GameVars.game.flourCost / 100).toFixed(2), this.financesCtx, toPixelSize(1), 60, 49, "#00bcd4", 1);
+
+        drawPixelTextInCanvas("grain price", this.financesCtx, toPixelSize(1), 22, 57, "#00bcd4", 1);
+        drawPixelTextInCanvas("$" + (GameVars.game.grainCost / 100).toFixed(2), this.financesCtx, toPixelSize(1), 60, 57, "#00bcd4", 1);
     }
 
     drawBoardControlBtns() {

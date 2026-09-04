@@ -80,6 +80,7 @@ export class Customer {
             this.productionTimer -= 1;
             this.patienceLevel = clamp(this.patienceLevel - this.patienceReduction, 0, 100);
             if (this.patienceLevel == 0) {
+                GameVars.game.updateReputation(this);
                 this.moveToBoardPos(10, 15);
             }
         }

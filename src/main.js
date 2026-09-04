@@ -189,7 +189,15 @@ const drawGameOverMenu = () => {
     gameOverCtx.clearRect(0, 0, gameOverCanv.width, gameOverCanv.height);
     gameOverCtx.fillStyle = "#452228dd";
     gameOverCtx.fillRect(0, 0, gameOverCanv.width, gameOverCanv.height);
-    drawPixelTextInCanvas("game over", gameOverCtx, GameVars.pixelSize, GameVars.gameWdAsPixels / 2, (GameVars.gameHgAsPixels / 2) - 2, "#9bf2fa", 3);
+    drawPixelTextInCanvas("game over", gameOverCtx, GameVars.pixelSize, GameVars.gameWdAsPixels / 2, (GameVars.gameHgAsPixels / 2) - 10, "#9bf2fa", 3);
+
+    if (game) {
+        if (game.playerMoney == 0) {
+            drawPixelTextInCanvas("run out of funds $0 ", gameOverCtx, GameVars.pixelSize, GameVars.gameWdAsPixels / 2, (GameVars.gameHgAsPixels / 2) + 10, "#9bf2fa", 1);
+        } else if (game.reputation == 0) {
+            drawPixelTextInCanvas("run out of reputation", gameOverCtx, GameVars.pixelSize, GameVars.gameWdAsPixels / 2, (GameVars.gameHgAsPixels / 2) + 10, "#9bf2fa", 1);
+        }
+    }
 }
 
 const drawSoundBtn = (force) => {
@@ -226,13 +234,14 @@ const handleGameOverScreen = () => {
     if (game.isGameOver && !isShowingFinishMenu) {
         isShowingFinishMenu = true;
         gameOverDiv.classList.remove("hidden");
+        drawGameOverMenu();
         timeoutID = setTimeout(() => {
             isShowingFinishMenu = false;
             mainMenuDiv.classList.remove("hidden");
             gameOverDiv.classList.add("hidden");
             gameDiv.innerHTML = "";
             clearTimeout(timeoutID);
-        }, 2000)
+        }, 3000)
     }
 }
 

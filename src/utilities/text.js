@@ -85,6 +85,8 @@ const retrievePixelLetter = (letter) => {
         case 'z':
             return z;
 
+        case '.':
+            return dot;
         case '!':
             return excl;
         case '$':
@@ -361,6 +363,14 @@ const z = [
     [false, true, false],
     [true, false, false],
     [true, true, true]
+];
+
+const dot = [
+    [false],
+    [false],
+    [false],
+    [false],
+    [true]
 ];
 
 const excl = [
