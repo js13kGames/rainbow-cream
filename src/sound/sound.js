@@ -62,10 +62,10 @@ export class Sound {
 
     playMusic() {
         if (this.isSoundOn && this.isSoundInitialized && this.ctx.state == "running") {
-            this.playSound("sine", mB[this.noteCount[0]], 0.3, 0, 0.8);
+            this.playSound("sine", mB[this.noteCount[0]], 0.4, 0, 0.8);
             this.updateNoteCount(0, mB);
 
-            this.playSound("triangle", mR[this.noteCount[1]], 0.3, 0, 0.2);
+            this.playSound("triangle", mR[this.noteCount[1]], 0.4, 0, 0.2);
             this.updateNoteCount(1, mR);
         }
     }
