@@ -105,6 +105,11 @@ export class Customer {
 
             this.boardX = Math.round((this.centerX / GameVars.tileSize) - 0.5);
             this.boardY = Math.round((this.centerY / GameVars.tileSize) - 0.5);
+
+            this.jumpingExtra += this.isGoingUp ? 1 : -1;
+            this.yPos = this.centerY + this.jumpingExtra;
+        } else {
+            this.yPos = this.centerY;
         }
 
         if (this.boardX == 10 && this.boardY == 15) {
@@ -121,35 +126,28 @@ export class Customer {
     }
 
     draw() {
-        if (this.isMoving()) {
-            this.jumpingExtra += this.isGoingUp ? 1 : -1;
-        } else {
-            this.jumpingExtra = 0;
-        }
-        const yPos = this.centerY + this.jumpingExtra;
-
         genSmallBox(this.ctx,
             this.centerX - 6,
-            yPos - 3,
+            this.yPos - 3,
             11, 7,
             toBoardPixelSize(1), "#00000066", "#00000066");
         drawSprite(this.ctx, Character,
             toBoardPixelSize(1),
             this.centerX - 5,
-            yPos - 19,
+            this.yPos - 19,
             { "cc": this.customerColor }
         );
 
         genSmallBox(this.ctx,
             this.centerX - 7,
-            yPos - 24,
+            this.yPos - 24,
             13, 3,
             toBoardPixelSize(1), "#000000", "#1b1116");
 
         this.ctx.fillStyle = getRangeColor(this.patienceLevel);
         this.ctx.fillRect(
             toBoardPixelSize(this.centerX - 6),
-            toBoardPixelSize(yPos - 23),
+            toBoardPixelSize(this.yPos - 23),
             toBoardPixelSize((12 * this.patienceLevel) / 100), toBoardPixelSize(2)
         );
     }

@@ -7,7 +7,7 @@ import { genSmallBox } from "../../utilities/box-generator";
 import { drawSprite } from "../../utilities/draw-utilities";
 import { drawPixelTextInCanvas } from "../../utilities/text";
 
-export class IceCreamWorker {
+export class CashierWorker {
     constructor() {
         this.board = GameVars.game.board;
         this.boardX = this.board.player.boardX;
@@ -26,29 +26,16 @@ export class IceCreamWorker {
         this.delayTimer = 0;
 
         this.ctx = this.board.boardCtx;
-        this.hasCone = false;
-        this.iceCreamColors = [];
-
         this.workerColor = CharacterColor[randomNumb(CharacterColor.length)];
 
-        this.state = EmployeeState.IDLE;
-        this.targetIceCreamMachineIndex = 0;
-        this.balconyIndex = 0;
-        this.customer = null;
+        this.state = EmployeeState.TO_CASHIER;
+        this.cashier = GameVars.game.board.cashiers[0];
+        this.moveToBoardPos(this.cashier.boardX, this.cashier.boardY - 1);
     }
 
     moveToBoardPos(boardX, boardY) {
         this.nextCenterX = (boardX * GameVars.tileSize) + (GameVars.tileSize / 2);
         this.nextCenterY = (boardY * GameVars.tileSize) + (GameVars.tileSize / 2);
-    }
-
-    cleanOrder() {
-        this.hasCone = false;
-        this.iceCreamColors = [];
-        this.state = EmployeeState.IDLE;
-        this.targetIceCreamMachineIndex = 0;
-        this.balconyIndex = 0;
-        this.customer = null;
     }
 
     isMoving() {
@@ -86,111 +73,10 @@ export class IceCreamWorker {
         }
 
         this.delayTimer += GameVars.deltaTime;
-        const staffSpeed = GameVars.game.management.getStaffSpeed();
+        const staffSpeed = GameVars.game.management.getStaffSpeed() + 2;
         if (this.delayTimer >= staffSpeed) {
             this.delayTimer -= staffSpeed;
-            switch (this.state) {
-                case EmployeeState.IDLE: this.onIdle(); break;
-                case EmployeeState.TO_CONE_MACHINE: this.checkArrival(); break;
-                case EmployeeState.TO_ICE_CREAM_MACHINE: this.checkArrival(); break;
-                case EmployeeState.TO_BALCONY: this.checkArrival(); break;
-                case EmployeeState.TO_BIN: this.checkArrival(); break;
-            }
-        }
-    }
-
-    onIdle() {
-        let bestBalconyIndex = -1;
-        let bestCustomer = null;
-        let bestPatience = 101;
-        for (let i = 0; i < this.board.balconies.length; i++) {
-            const customer = this.board.balconies[i].customer;
-            if (!customer || this.isAlreadyBeingServed(customer)) continue;
-            if (customer.patienceLevel < bestPatience) {
-                bestPatience = customer.patienceLevel;
-                bestBalconyIndex = i;
-                bestCustomer = customer;
-            }
-        }
-        if (bestBalconyIndex !== -1) {
-            this.balconyIndex = bestBalconyIndex;
-            this.customer = bestCustomer;
-            this.state = EmployeeState.TO_CONE_MACHINE;
-
-            const coneMachine = this.board.coneMachines[0];
-            this.moveToBoardPos(coneMachine.boardX, coneMachine.boardY + 1);
-        }
-    }
-
-    isAlreadyBeingServed(customer) {
-        for (let i = 0; i < this.board.iceCreamWorkers.length; i++) {
-            const worker = this.board.iceCreamWorkers[i];
-            if (worker == this) continue;
-            if (worker.customer && worker.customer === customer) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    checkArrival() {
-        if (!this.isMoving()) {
-            switch (this.state) {
-                case EmployeeState.TO_CONE_MACHINE: this.onReachConeMachine(); break;
-                case EmployeeState.TO_ICE_CREAM_MACHINE: this.onReachIceCreamMachine(); break;
-                case EmployeeState.TO_BALCONY: this.onReachBalcony(); break;
-                case EmployeeState.TO_BIN: this.cleanOrder(); break;
-            }
-        }
-    }
-
-    onReachConeMachine() {
-        if (!this.hasCone) {
-            const coneMachine = this.board.coneMachines[0];
-            if (coneMachine.flourAmount >= 10) {
-                this.hasCone = true;
-                coneMachine.flourAmount = clamp(coneMachine.flourAmount - 10, 0, 100);
-                this.setTargetIceCreamMachine(0);
-            }
-        }
-    }
-
-    setTargetIceCreamMachine(index) {
-        const iceCreamMachine = this.board.iceCreamMachines[this.customer.flavoursColors[index]];
-        this.targetIceCreamMachineIndex = index;
-        this.moveToBoardPos(iceCreamMachine.boardX, iceCreamMachine.boardY + 1);
-        this.state = EmployeeState.TO_ICE_CREAM_MACHINE;
-    }
-
-    onReachIceCreamMachine() {
-        const customer = this.customer;
-        const targetColor = customer.flavoursColors[this.targetIceCreamMachineIndex];
-        const iceCreamMachine = this.board.iceCreamMachines[targetColor];
-
-        if (iceCreamMachine.iceCreamAmount > 10 && this.iceCreamColors.length < 3) {
-            this.iceCreamColors.push(targetColor);
-            iceCreamMachine.iceCreamAmount = clamp(iceCreamMachine.iceCreamAmount - 10, 0, 100);
-
-            this.targetIceCreamMachineIndex++;
-            if (this.targetIceCreamMachineIndex < customer.flavoursColors.length) {
-                this.setTargetIceCreamMachine(this.targetIceCreamMachineIndex);
-            } else {
-                const balcony = this.board.balconies[this.balconyIndex];
-                this.moveToBoardPos(balcony.boardX, balcony.boardY - 1);
-                this.state = EmployeeState.TO_BALCONY;
-            }
-        }
-    }
-
-    onReachBalcony() {
-        const balcony = this.board.balconies[this.balconyIndex];
-        const customer = this.customer;
-        if (balcony.customer != customer || !balcony.checkIfOrderIsCorrect(this)) {
-            const bin = this.board.bin;
-            this.moveToBoardPos(bin.boardX - 1, bin.boardY);
-            this.state = EmployeeState.TO_BIN;
-        } else {
-            balcony.processDelivery(this);
+            !this.isMoving() && this.cashier.hasClient() && this.cashier.moveClient();
         }
     }
 
@@ -206,7 +92,7 @@ export class IceCreamWorker {
             this.yPos - 19,
             { "cc": this.workerColor }
         );
-        drawPixelTextInCanvas("i", this.ctx, toBoardPixelSize(1),
+        drawPixelTextInCanvas("c", this.ctx, toBoardPixelSize(1),
             this.centerX,
             this.yPos - 15,
             "#9bf2fa"

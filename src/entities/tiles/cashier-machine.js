@@ -30,13 +30,9 @@ export class CashierMachine extends Tile {
             GameVars.sound.clickSound();
             this.interactionBallon = createElem(this.gameDiv, "canvas", null, null, toBoardPixelSize(44), toBoardPixelSize(12), null, () => {
                 if (!GameVars.game.pause) {
-                    const availableBalcony = GameVars.game.board.balconies.find(b => !b.customer);
-                    this.customer = GameVars.game.board.customers.find(customer => customer.boardX == this.boardX && customer.boardY == this.boardY + 1);
-                    if (availableBalcony && this.customer) {
+                    if (this.hasClient()) {
                         GameVars.sound.clickSound();
-                        this.customer.moveToBoardPos(availableBalcony.boardX, this.boardY + 1);
-                        this.customer.increasePatience();
-                        this.customer = null;
+                        this.moveClient();
                         this.destroyInteractionBallon();
                     }
                 }
@@ -49,6 +45,18 @@ export class CashierMachine extends Tile {
             drawPixelTextInCanvas("take order", ctx, toBoardPixelSize(1), 21, 5, "#000000", 1);
             genSmallBox(ctx, 40, 8, 3, 3, toBoardPixelSize(1), "#000000", "#ffffff");
         }
+    }
+
+    hasClient() {
+        this.availableBalcony = GameVars.game.board.balconies.find(b => !b.customer);
+        this.customer = GameVars.game.board.customers.find(customer => customer.boardX == this.boardX && customer.boardY == this.boardY + 1);
+        return this.availableBalcony && this.customer;
+    }
+
+    moveClient() {
+        this.customer.moveToBoardPos(this.availableBalcony.boardX, this.boardY + 1);
+        this.customer.increasePatience();
+        this.customer = null;
     }
 
     destroyInteractionBallon() {

@@ -71,6 +71,12 @@ export class Player {
 
             this.boardX = Math.round((this.centerX / GameVars.tileSize) - 0.5);
             this.boardY = Math.round((this.centerY / GameVars.tileSize) - 0.5);
+
+            this.jumpingExtra += this.isGoingUp ? 1 : -1;
+            this.yPos = this.centerY + this.jumpingExtra;
+        } else {
+            this.jumpingExtra = 0;
+            this.yPos = this.centerY;
         }
     }
 
@@ -79,51 +85,44 @@ export class Player {
     }
 
     draw() {
-        if (this.isMoving()) {
-            this.jumpingExtra += this.isGoingUp ? 1 : -1;
-        } else {
-            this.jumpingExtra = 0;
-        }
-        const yPos = this.centerY + this.jumpingExtra;
-
         genSmallBox(this.ctx,
             this.centerX - 6,
-            yPos - 3,
+            this.yPos - 3,
             11, 7,
             toBoardPixelSize(1), "#00000066", "#00000066");
         drawSprite(this.ctx, Character,
             toBoardPixelSize(1),
             this.centerX - 5,
-            yPos - 19,
+            this.yPos - 19,
             { "cc": this.playerColor }
         );
         drawPixelTextInCanvas("P", this.ctx, toBoardPixelSize(1),
             this.centerX,
-            yPos - 15,
+            this.yPos - 15,
             "#9bf2fa"
         );
 
         if (this.hasCone) {
             genSmallBox(this.ctx,
                 this.centerX + 5,
-                yPos - 14,
+                this.yPos - 14,
                 3, 3,
                 toBoardPixelSize(1), "#000000", "#cbe5ff");
             genSmallBox(this.ctx,
                 this.centerX + 7,
-                yPos - 28,
+                this.yPos - 28,
                 12, 15,
                 toBoardPixelSize(1), "#000000", "#cbe5ff");
 
             if (this.iceCreamColors.length == 0) {
                 drawSprite(this.ctx, Cone, toBoardPixelSize(1),
                     this.centerX + 10,
-                    yPos - 26,
+                    this.yPos - 26,
                 );
             } else if (this.iceCreamColors.length == 1) {
                 drawSprite(this.ctx, ConeWithStep1, toBoardPixelSize(1),
                     this.centerX + 10,
-                    yPos - 26,
+                    this.yPos - 26,
                     {
                         "lc1": getLightColorByType(this.iceCreamColors[0]),
                         "dc1": getDarkColorByType(this.iceCreamColors[0])
@@ -132,7 +131,7 @@ export class Player {
             } else if (this.iceCreamColors.length == 2) {
                 drawSprite(this.ctx, ConeWithStep2, toBoardPixelSize(1),
                     this.centerX + 10,
-                    yPos - 26,
+                    this.yPos - 26,
                     {
                         "lc1": getLightColorByType(this.iceCreamColors[0]),
                         "dc1": getDarkColorByType(this.iceCreamColors[0]),
@@ -144,7 +143,7 @@ export class Player {
             } else if (this.iceCreamColors.length == 3) {
                 drawSprite(this.ctx, ConeWithStep3, toBoardPixelSize(1),
                     this.centerX + 10,
-                    yPos - 26,
+                    this.yPos - 26,
                     {
                         "lc1": getLightColorByType(this.iceCreamColors[0]),
                         "dc1": getDarkColorByType(this.iceCreamColors[0]),

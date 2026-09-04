@@ -28,7 +28,7 @@ export class Game {
         this.board = new Board(this.gameBoardDiv);
         this.ui = new UI(this);
 
-        this.board.cachiers[0].createInteractionBallon();
+        this.board.cashiers[0].createInteractionBallon();
 
         this.isGameRunning = true;
         this.isGameOver = false;

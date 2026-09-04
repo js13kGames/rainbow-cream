@@ -1,5 +1,4 @@
 import { ColorType } from "./enum/color-type";
-import { StaffPriority } from "./enum/employee-state";
 import { GameVars } from "./game-variables";
 
 export class Management {
@@ -16,19 +15,16 @@ export class Management {
 
         this.staffUnlockValue = 1000;
         this.isStaffUnlocked = false;
-        this.staffSpeed = 1;
-        this.staffSpeedLvl = 0;
         this.staffCost = 4;
         this.staffPayTimer = 0;
-        this.staffPriority = StaffPriority.PATIENCE;
 
         this.baseIceCreamWorkerCost = 200;
-
-        this.isOrderWorkerUnlocked = false;
-        this.baseOrderWorkerCost = 200;
-
-        this.isSupplyWorkerUnlocked = false;
+        this.baseCashierWorkerCost = 200;
         this.baseSupplyWorkerCost = 200;
+
+        this.staffSpeed = 1;
+        this.staffSpeedLvl = 0;
+        this.baseSpeedUpgradeCost = 400;
     }
 
     unlockMenuEdit() {
@@ -53,12 +49,24 @@ export class Management {
         return Math.round(this.baseIceCreamWorkerCost * (1 + (0.5 * currentAmountOfWorkers)));
     }
 
+    cashierWorkerCost(currentAmountOfWorkers) {
+        return Math.round(this.baseCashierWorkerCost * (1 + (0.5 * currentAmountOfWorkers)));
+    }
+
+    supplyWorkerCost(currentAmountOfWorkers) {
+        return Math.round(this.baseSupplyWorkerCost * (1 + (0.5 * currentAmountOfWorkers)));
+    }
+
+    speedUpgradeCost() {
+        return Math.round(this.baseSpeedUpgradeCost * (1 + (0.5 * this.staffSpeedLvl)));
+    }
+
     getStaffSpeed() {
         return this.staffSpeed * (1 - (1 - 1 / (1 + this.staffSpeedLvl)));
     }
 
     getStaffPaymentCost() {
-        return 4 * (GameVars.game.board.iceCreamWorkers.length + GameVars.game.board.orderWorkers.length + GameVars.game.board.supplyWorker.length);
+        return 4 * (GameVars.game.board.iceCreamWorkers.length + GameVars.game.board.cashierWorkers.length + GameVars.game.board.supplyWorkers.length);
     }
 
     getFlavoursCost(flavourAmount) {

@@ -29,20 +29,19 @@ export class PlusMinusUI {
         this.plusBtn.style.translate = (x + toPixelSize(53)) + 'px ' + (y + toPixelSize(4)) + 'px';
     }
 
-    draw(x, y, currentValue, minValue, maxValue, useCost) {
+    draw(x, y, currentValue, minValue, maxValue, cost) {
         this.resize(x, y);
 
-        const cost = this.game.management.iceCreamWorkerCost(currentValue);
         genSmallBox(this.mainCanvCtx, 0, 0, 79, 21, toPixelSize(1), "#3e384655", "#1b1116");
-        drawPixelTextInCanvas(this.title[0], this.mainCanvCtx, toPixelSize(1), 19, useCost ? 5 : 8, "#00bcd4", 1);
-        drawPixelTextInCanvas(this.title[1], this.mainCanvCtx, toPixelSize(1), 19, useCost ? 11 : 14, "#00bcd4", 1);
-        if (useCost) drawPixelTextInCanvas("($" + cost + ")", this.mainCanvCtx, toPixelSize(1), 19, 17, "#00bcd4", 1);
+        drawPixelTextInCanvas(this.title[0], this.mainCanvCtx, toPixelSize(1), 19, cost ? 5 : 8, "#00bcd4", 1);
+        drawPixelTextInCanvas(this.title[1], this.mainCanvCtx, toPixelSize(1), 19, cost ? 11 : 14, "#00bcd4", 1);
+        if (cost) drawPixelTextInCanvas("($" + cost + ")", this.mainCanvCtx, toPixelSize(1), 19, 17, "#00bcd4", 1);
 
         const disableMinus = currentValue == minValue;
         genSmallBox(this.minusCtx, 0, 0, 13, 13, toPixelSize(1), "#9bf2fa" + (disableMinus ? "55" : ""), "#1b1116");
         drawPixelTextInCanvas("-", this.minusCtx, toPixelSize(1), 7, 7, "#9bf2fa" + (disableMinus ? "55" : ""), 3);
 
-        const disablePlus = currentValue == maxValue || (useCost && this.game.playerMoney < cost);
+        const disablePlus = currentValue == maxValue || (cost && this.game.playerMoney < cost);
         genSmallBox(this.plusCtx, 0, 0, 13, 13, toPixelSize(1), "#9bf2fa" + (disablePlus ? "55" : ""), "#1b1116");
         drawPixelTextInCanvas("+", this.plusCtx, toPixelSize(1), 7, 7, "#9bf2fa" + (disablePlus ? "55" : ""), 3);
 

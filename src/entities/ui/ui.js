@@ -64,7 +64,7 @@ export class UI {
 
     resize() {
         const board = this.game.board;
-        const hasWorkers = board.iceCreamWorkers.length > 0 || board.orderWorkers.length > 0 || board.supplyWorker.length > 0;
+        const hasWorkers = board.iceCreamWorkers.length > 0 || board.cashierWorkers.length > 0 || board.supplyWorkers.length > 0;
         const amountOfFinances = 2 + (hasWorkers ? 1 : 0);
         setElemSize(this.financesCanv, toPixelSize(80), toPixelSize(16 + (amountOfFinances * 14)));
         this.financesCanv.style.translate = (GameVars.gameW - this.financesCanv.width - toPixelSize(8)) + 'px ' + (toPixelSize(8)) + 'px';
@@ -115,12 +115,12 @@ export class UI {
         this.financesCtx.clearRect(0, 0, this.financesCanv.width, this.financesCanv.height);
 
         const board = this.game.board;
-        const hasWorkers = board.iceCreamWorkers.length > 0 || board.orderWorkers.length > 0 || board.supplyWorker.length > 0;
+        const hasWorkers = board.iceCreamWorkers.length > 0 || board.cashierWorkers.length > 0 || board.supplyWorkers.length > 0;
         const amountOfFinances = 2 + (hasWorkers ? 1 : 0);
         genSmallBox(this.financesCtx, 0, 0, 79, 15 + (amountOfFinances * 9), toPixelSize(1), "#3e3846", "#1b1116");
         drawPixelTextInCanvas("finances", this.financesCtx, toPixelSize(1), 40, 8, "#00bcd4", 1);
 
-        drawPixelTextInCanvas("fonds", this.financesCtx, toPixelSize(1), 14, 19, "#00bcd4", 1);
+        drawPixelTextInCanvas("funds", this.financesCtx, toPixelSize(1), 14, 19, "#00bcd4", 1);
         drawPixelTextInCanvas("$" + GameVars.game.playerMoney, this.financesCtx, toPixelSize(1), 52, 19, "#00bcd4", 1);
 
         drawPixelTextInCanvas("rent", this.financesCtx, toPixelSize(1), 12, 27, "#00bcd4", 1);
