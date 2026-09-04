@@ -87,7 +87,7 @@ export class IceCreamMachine extends Tile {
     }
 
     activateTutorialIceCreamMachine(color) {
-        GameVars.game.board.iceCreamMachine[color].createInteractionBallon();
+        GameVars.game.board.iceCreamMachines[color].createInteractionBallon();
     }
 
     destroyInteractionBallon() {
@@ -117,8 +117,8 @@ export class IceCreamMachine extends Tile {
 
     produceIceCream() {
         if (this.iceCreamAmount < 100 && this.feedAmount > 0) {
-            this.feedAmount = clamp(this.feedAmount - 2, 0, 100);
-            this.iceCreamAmount = clamp(this.iceCreamAmount + 1, 0, 100);
+            this.feedAmount = clamp(this.feedAmount - GameVars.game.management.unicornGrainConsumption(this.iceCreamColor), 0, 100);
+            this.iceCreamAmount = clamp(this.iceCreamAmount + GameVars.game.management.unicornIceCreamProduction(this.iceCreamColor), 0, 100);
         }
     }
 

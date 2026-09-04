@@ -33,8 +33,8 @@ export class PlusMinusUI {
         this.resize(x, y);
 
         genSmallBox(this.mainCanvCtx, 0, 0, 79, 21, toPixelSize(1), "#3e384655", "#1b1116");
-        drawPixelTextInCanvas(this.title[0], this.mainCanvCtx, toPixelSize(1), 19, cost ? 5 : 8, "#00bcd4", 1);
-        drawPixelTextInCanvas(this.title[1], this.mainCanvCtx, toPixelSize(1), 19, cost ? 11 : 14, "#00bcd4", 1);
+        drawPixelTextInCanvas(this.title[0], this.mainCanvCtx, toPixelSize(1), 20, cost ? 5 : 8, "#00bcd4", 1);
+        drawPixelTextInCanvas(this.title[1], this.mainCanvCtx, toPixelSize(1), 20, cost ? 11 : 14, "#00bcd4", 1);
         if (cost) drawPixelTextInCanvas("($" + cost + ")", this.mainCanvCtx, toPixelSize(1), 19, 17, "#00bcd4", 1);
 
         const disableMinus = currentValue == minValue;

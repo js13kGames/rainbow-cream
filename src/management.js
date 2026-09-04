@@ -3,7 +3,7 @@ import { GameVars } from "./game-variables";
 
 export class Management {
     constructor() {
-        this.isMenuEditUnlockValue = 600;
+        this.menuEditUnlockValue = 600;
         this.isMenuEditUnlocked = false;
         this.isBlueActive = true;
         this.isYellowActive = true;
@@ -17,23 +17,47 @@ export class Management {
         this.isStaffUnlocked = false;
         this.staffCost = 4;
         this.staffPayTimer = 0;
-
-        this.baseIceCreamWorkerCost = 200;
-        this.baseCashierWorkerCost = 200;
-        this.baseSupplyWorkerCost = 200;
-
+        this.baseWorkerCost = 200;
         this.staffSpeed = 1;
         this.staffSpeedLvl = 0;
         this.baseSpeedUpgradeCost = 400;
+
+        this.unicornHandlingUnlockedValue = 1400;
+        this.isUnicornHandlingUnlocked = false;
+        this.baseUnicornGrainConsumption = 2;
+        this.baseUnicornIceCreamProduction = 1;
+        this.blueUnicornProductionSpeedLvl = 0;
+        this.yellowUnicornProductionSpeedLvl = 0;
+        this.redUnicornProductionSpeedLvl = 0;
+        this.baseUnicornProductionCost = 200;
     }
 
     unlockMenuEdit() {
-        if (!this.isMenuEditUnlocked && GameVars.game.playerMoney >= this.isMenuEditUnlockValue) {
-            GameVars.game.pay(this.isMenuEditUnlockValue);
+        if (!this.isMenuEditUnlocked && GameVars.game.playerMoney >= this.menuEditUnlockValue) {
+            GameVars.game.pay(this.menuEditUnlockValue);
             this.isMenuEditUnlocked = true;
         } else {
             GameVars.sound.wrongSound();
         }
+    }
+    getFlavoursCost(flavourAmount) {
+        switch (flavourAmount) {
+            case 0: return this.oneFlavourPrice;
+            case 1: return this.twoFlavoursPrice;
+            case 2: return this.threeFlavoursPrice;
+        }
+    }
+    getMaxFlavours() {
+        let maxByColors = this.isBlueActive ? 1 : 0;
+        maxByColors += this.isYellowActive ? 1 : 0;
+        maxByColors += this.isRedActive ? 1 : 0;
+        return Math.min(maxByColors, this.maxFlavourAmount);
+    }
+    isActiveFlavour(color) {
+        if (color == ColorType.BLUE && this.isBlueActive) return true;
+        if (color == ColorType.YELLOW && this.isYellowActive) return true;
+        if (color == ColorType.RED && this.isRedActive) return true;
+        return false
     }
 
     unlockStaff() {
@@ -44,51 +68,48 @@ export class Management {
             GameVars.sound.wrongSound();
         }
     }
-
     iceCreamWorkerCost(currentAmountOfWorkers) {
-        return Math.round(this.baseIceCreamWorkerCost * (1 + (0.5 * currentAmountOfWorkers)));
+        return Math.round(this.baseWorkerCost * (1 + (0.5 * currentAmountOfWorkers)));
     }
-
     cashierWorkerCost(currentAmountOfWorkers) {
-        return Math.round(this.baseCashierWorkerCost * (1 + (0.5 * currentAmountOfWorkers)));
+        return Math.round(this.baseWorkerCost * (1 + (0.5 * currentAmountOfWorkers)));
     }
-
     supplyWorkerCost(currentAmountOfWorkers) {
-        return Math.round(this.baseSupplyWorkerCost * (1 + (0.5 * currentAmountOfWorkers)));
+        return Math.round(this.baseWorkerCost * (1 + (0.5 * currentAmountOfWorkers)));
     }
-
     speedUpgradeCost() {
         return Math.round(this.baseSpeedUpgradeCost * (1 + (0.5 * this.staffSpeedLvl)));
     }
-
     getStaffSpeed() {
         return this.staffSpeed * (1 - (1 - 1 / (1 + this.staffSpeedLvl)));
     }
-
     getStaffPaymentCost() {
         return 4 * (GameVars.game.board.iceCreamWorkers.length + GameVars.game.board.cashierWorkers.length + GameVars.game.board.supplyWorkers.length);
     }
 
-    getFlavoursCost(flavourAmount) {
-        switch (flavourAmount) {
-            case 0: return this.oneFlavourPrice;
-            case 1: return this.twoFlavoursPrice;
-            case 2: return this.threeFlavoursPrice;
+    unlockUnicornHandling() {
+        if (!this.isUnicornHandlingUnlocked && GameVars.game.playerMoney >= this.unicornHandlingUnlockedValue) {
+            GameVars.game.pay(this.unicornHandlingUnlockedValue);
+            this.isUnicornHandlingUnlocked = true;
+        } else {
+            GameVars.sound.wrongSound();
         }
     }
-
-    getMaxFlavours() {
-        let maxByColors = this.isBlueActive ? 1 : 0;
-        maxByColors += this.isYellowActive ? 1 : 0;
-        maxByColors += this.isRedActive ? 1 : 0;
-        return Math.min(maxByColors, this.maxFlavourAmount);
+    unicornProductionSpeedUpgradeCost(colorType) {
+        return Math.round(this.baseUnicornProductionCost * (1 + (0.5 * this.getUnicornProductionSpeedLvlBasedOnColor(colorType))));
     }
-
-    isActiveFlavour(color) {
-        if (color == ColorType.BLUE && this.isBlueActive) return true;
-        if (color == ColorType.YELLOW && this.isYellowActive) return true;
-        if (color == ColorType.RED && this.isRedActive) return true;
-        return false
+    unicornGrainConsumption(colorType) {
+        return this.baseUnicornGrainConsumption + (this.baseUnicornGrainConsumption * this.getUnicornProductionSpeedLvlBasedOnColor(colorType));
+    }
+    unicornIceCreamProduction(colorType) {
+        return this.baseUnicornIceCreamProduction + (this.baseUnicornIceCreamProduction * this.getUnicornProductionSpeedLvlBasedOnColor(colorType));
+    }
+    getUnicornProductionSpeedLvlBasedOnColor(colorType) {
+        switch (colorType) {
+            case ColorType.BLUE: return this.blueUnicornProductionSpeedLvl;
+            case ColorType.YELLOW: return this.yellowUnicornProductionSpeedLvl;
+            case ColorType.RED: return this.redUnicornProductionSpeedLvl;
+        }
     }
 
     update() {
