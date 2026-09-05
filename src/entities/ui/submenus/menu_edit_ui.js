@@ -44,8 +44,7 @@ export class MenuEditUI {
 
         this.iceCreamPrice = new PlusMinusUI(game, this.menuDiv, "icecream|price", "|",
             () => {
-                if (this.game.management.iceCreamPrice == 1) this.game.management.iceCreamPrice--;
-                this.game.management.iceCreamPrice += 10;
+                this.game.management.iceCreamPrice = Math.min(this.game.management.iceCreamPrice + 10, this.game.management.getMaxIceCreamPrice());
             },
             () => {
                 this.game.management.iceCreamPrice = clamp(this.game.management.iceCreamPrice - 10, 1, Number.MAX_SAFE_INTEGER);
@@ -108,6 +107,6 @@ export class MenuEditUI {
         drawPixelTextInCanvas("red", this.redActiveCtx, toPixelSize(1), 9, 6, "#9bf2fa" + (isRedActive ? "" : "55"));
 
         this.numberOfFlavours.draw(this.xPos, this.yPos + toPixelSize(40), this.game.management.maxFlavourAmount, 1, 3);
-        this.iceCreamPrice.draw(this.xPos, this.yPos + toPixelSize(60), this.game.management.iceCreamPrice, 1, Number.MAX_SAFE_INTEGER);
+        this.iceCreamPrice.draw(this.xPos, this.yPos + toPixelSize(60), this.game.management.iceCreamPrice, 1, this.game.management.getMaxIceCreamPrice());
     }
 }

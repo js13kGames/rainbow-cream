@@ -10,6 +10,7 @@ export class Management {
         this.isRedActive = true;
         this.maxFlavourAmount = 3;
         this.iceCreamPrice = 100;
+        this.iceCreamPriceRatio = 4;
 
         this.staffUnlockValue = 1000;
         this.isStaffUnlocked = false;
@@ -43,6 +44,13 @@ export class Management {
         maxByColors += this.isYellowActive ? 1 : 0;
         maxByColors += this.isRedActive ? 1 : 0;
         return Math.min(maxByColors, this.maxFlavourAmount);
+    }
+    getMaxIceCreamPrice() {
+        return Math.max(1, Math.round(GameVars.game.reputation * this.iceCreamPriceRatio));
+    }
+    clampIceCreamPrice() {
+        const cap = this.getMaxIceCreamPrice();
+        if (this.iceCreamPrice > cap) this.iceCreamPrice = cap;
     }
     isActiveFlavour(color) {
         if (color == ColorType.BLUE && this.isBlueActive) return true;
@@ -109,5 +117,6 @@ export class Management {
             this.staffPayTimer -= 1;
             GameVars.game.pay(this.getStaffPaymentCost());
         }
+        this.clampIceCreamPrice();
     }
 }
