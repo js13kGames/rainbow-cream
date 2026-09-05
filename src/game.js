@@ -60,7 +60,7 @@ export class Game {
     getIceCreamCost(customer) {
         const tipLevel = this.getTipLevel(customer.patienceLevel);
         const iceCreamCost = this.management.iceCreamPrice;
-        return Math.round(iceCreamCost + (tipLevel * iceCreamCost / 4));
+        return Math.round(iceCreamCost + (tipLevel * iceCreamCost / 6));
     }
 
     getTipLevel(patienceLevel) {
