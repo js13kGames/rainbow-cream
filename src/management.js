@@ -10,7 +10,7 @@ export class Management {
         this.isRedActive = true;
         this.maxFlavourAmount = 3;
         this.iceCreamPrice = 100;
-        this.iceCreamPriceRatio = 4;
+        this.iceCreamPriceRatio = 6;
 
         this.staffUnlockValue = 1000;
         this.isStaffUnlocked = false;
