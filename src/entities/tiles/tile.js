@@ -52,7 +52,7 @@ export class Tile {
 
     updateZoom() {
         this.collisionObj = this.createCollisionBox();
-        if (this.interactionBallon || this.takeCone || this.buyFlour || this.feedGrain || this.takeIcecream) {
+        if (this.interactionBallon || this.takeCone || this.buyFlour || this.feedGrainCanv || this.takeIcecreamCanv) {
             this.destroyInteractionBallon();
             this.createInteractionBallon();
         }
