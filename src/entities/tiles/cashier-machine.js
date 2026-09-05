@@ -6,7 +6,6 @@ import { drawBalcony, drawSprite } from "../../utilities/draw-utilities";
 import { createElem } from "../../utilities/elem-utilities";
 import { drawPixelTextInCanvas } from "../../utilities/text";
 import { Rectangle } from "../rectangle";
-import { SelectionArrow } from "../selection-arrow";
 import { Tile } from "./tile";
 
 export class CashierMachine extends Tile {

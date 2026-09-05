@@ -2,7 +2,6 @@ import { TileType } from "../../enum/tile-type";
 import { GameVars, toBoardPixelSize } from "../../game-variables";
 import { drawFloor } from "../../utilities/draw-utilities";
 import { Rectangle } from "../rectangle";
-import { SelectionArrow } from "../selection-arrow";
 import { Tile } from "./tile";
 
 export class Grass extends Tile {

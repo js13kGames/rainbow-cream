@@ -8,7 +8,6 @@ import { createElem } from "../../utilities/elem-utilities";
 import { clamp } from "../../utilities/general-utilities";
 import { drawPixelTextInCanvas } from "../../utilities/text";
 import { Rectangle } from "../rectangle";
-import { SelectionArrow } from "../selection-arrow";
 import { Tile } from "./tile";
 
 export class IceCreamMachine extends Tile {

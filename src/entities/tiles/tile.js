@@ -1,7 +1,6 @@
 import { TileType } from "../../enum/tile-type";
 import { GameVars, toBoardPixelSize } from "../../game-variables";
 import { Rectangle } from "../rectangle";
-import { SelectionArrow } from "../selection-arrow";
 
 export class Tile {
     constructor(boardX, boardY, ctx) {
@@ -9,7 +8,6 @@ export class Tile {
         this.boardY = boardY;
 
         this.character = null;
-        this.selectionArrow = new SelectionArrow();
 
         this.isHighlight = false;
         this.isSelected = false;
