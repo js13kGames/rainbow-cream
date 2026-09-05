@@ -19,6 +19,8 @@ export class Game {
         this.minReputationFloor = 5;
         this.maxReviewReward = 6;
 
+        this.score = 0;
+
         this.gameChangeDuration = 10;
 
         this.rentCost = 4;
@@ -51,6 +53,7 @@ export class Game {
         } else if (tipLevel == 2) {
             this.reputation += this.calculateGoodReviewRatio(this.management.iceCreamPrice);
         }
+        if (customer.patienceLevel > 0) this.score += tipLevel + 1;
         this.reputation = clamp(this.reputation, 0, 100);
     }
 

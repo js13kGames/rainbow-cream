@@ -90,7 +90,8 @@ export class ManagementUI {
     drawButtons() {
         this.managementCtx.clearRect(0, 0, this.managementCanv.width, this.managementCanv.height);
         genSmallBox(this.managementCtx, 0, 0, 79, 55, toPixelSize(1), "#3e3846", "#1b1116");
-        drawPixelTextInCanvas("management", this.managementCtx, toPixelSize(1), 40, 8, "#00bcd4", 1);
+        genSmallBox(this.managementCtx, 0, 0, 79, 11, toPixelSize(1), "#3e3846", "#1b1116");
+        drawPixelTextInCanvas("management", this.managementCtx, toPixelSize(1), 40, 7, "#00bcd4", 1);
 
         let isUnlocked = this.game.management.isMenuEditUnlocked;
         let cost = this.game.management.menuEditUnlockValue;

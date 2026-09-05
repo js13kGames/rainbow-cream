@@ -70,7 +70,7 @@ export class Board {
     setGameBoardCanvas() {
         setElemSize(this.boardCanvas,
             toBoardPixelSize(GameVars.tileSize * GameVars.gameBoardSize),
-            toBoardPixelSize((GameVars.tileSize * GameVars.gameBoardSize) - (GameVars.tileSize * 2))
+            toBoardPixelSize((GameVars.tileSize / 2) + (GameVars.tileSize * GameVars.gameBoardSize))
         );
     }
 

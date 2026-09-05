@@ -1,4 +1,6 @@
-import { Point } from "./entities/point";
+const storeId = 'igorfie-rainbow-cream';
+
+let highScore = parseInt(localStorage.getItem(storeId)) || 0;
 
 const tileSize = 16;
 
@@ -46,6 +48,9 @@ let gameWdAsPixels;
 let gameHgAsPixels;
 
 export const GameVars = {
+    storeId,
+    highScore,
+
     isMobile,
 
     sound,

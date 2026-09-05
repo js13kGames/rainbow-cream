@@ -65,7 +65,7 @@ export class UI {
     }
 
     resize() {
-        setElemSize(this.financesCanv, toPixelSize(80), toPixelSize(64));
+        setElemSize(this.financesCanv, toPixelSize(80), toPixelSize(80));
         this.financesCanv.style.translate = (GameVars.gameW - this.financesCanv.width - toPixelSize(8)) + 'px ' + (toPixelSize(8)) + 'px';
 
         setElemSize(this.pauseCanv, toPixelSize(60), toPixelSize(20));
@@ -116,39 +116,49 @@ export class UI {
         const board = this.game.board;
         const hasWorkers = board.iceCreamWorkers.length > 0 || board.cashierWorkers.length > 0 || board.supplyWorkers.length > 0;
         const amountOfFinances = 3 + (hasWorkers ? 1 : 0);
-        genSmallBox(this.financesCtx, 0, 0, 79, 63, toPixelSize(1), "#3e3846", "#1b1116");
-        drawPixelTextInCanvas("finances", this.financesCtx, toPixelSize(1), 40, 8, "#00bcd4", 1);
+        genSmallBox(this.financesCtx, 0, 0, 79, 79, toPixelSize(1), "#3e3846", "#1b1116");
+        genSmallBox(this.financesCtx, 0, 0, 79, 11, toPixelSize(1), "#3e3846", "#1b1116");
+        drawPixelTextInCanvas("finances", this.financesCtx, toPixelSize(1), 40, 7, "#00bcd4", 1);
 
-        drawPixelTextInCanvas("reputation", this.financesCtx, toPixelSize(1), 22, 17, "#00bcd4", 1);
-        drawPixelTextInCanvas(-GameVars.game.calculateBadReviewRatio(GameVars.game.management.iceCreamPrice), this.financesCtx, toPixelSize(1), 46, 17, "#00bcd4", 1);
-        genSmallBox(this.financesCtx, 49, 14, 20, 5, toPixelSize(1), "#3e3846", "#1b1116");
+        drawPixelTextInCanvas("score", this.financesCtx, toPixelSize(1), 13, 16, "#00bcd4", 1);
+        drawPixelTextInCanvas(GameVars.game.score, this.financesCtx, toPixelSize(1), 60, 16, "#00bcd4", 1);
+
+        genSmallBox(this.financesCtx, 0, 20, 79, 16, toPixelSize(1), "#3e3846", "#1b1116");
+
+        drawPixelTextInCanvas("reputation", this.financesCtx, toPixelSize(1), 22, 25, "#00bcd4", 1);
+        drawPixelTextInCanvas(-GameVars.game.calculateBadReviewRatio(GameVars.game.management.iceCreamPrice), this.financesCtx, toPixelSize(1), 46, 25, "#00bcd4", 1);
+        genSmallBox(this.financesCtx, 49, 22, 20, 5, toPixelSize(1), "#3e3846", "#1b1116");
         this.financesCtx.fillStyle = getRangeColor(this.game.reputation);
         this.financesCtx.fillRect(
             Math.round((49 * toPixelSize(1)) + toPixelSize(1)),
-            Math.round((14 * toPixelSize(1)) + toPixelSize(1)),
+            Math.round((22 * toPixelSize(1)) + toPixelSize(1)),
             Math.round((clamp((20 * this.game.reputation) / 100, 0, 20) * toPixelSize(1)) - toPixelSize(1)),
             Math.round((5 * toPixelSize(1)) - toPixelSize(1))
         );
-        drawPixelTextInCanvas(GameVars.game.calculateGoodReviewRatio(GameVars.game.management.iceCreamPrice), this.financesCtx, toPixelSize(1), 74, 17, "#00bcd4", 1);
+        drawPixelTextInCanvas(GameVars.game.calculateGoodReviewRatio(GameVars.game.management.iceCreamPrice), this.financesCtx, toPixelSize(1), 74, 25, "#00bcd4", 1);
 
-        drawPixelTextInCanvas("funds", this.financesCtx, toPixelSize(1), 13, 25, "#00bcd4", 1);
-        drawPixelTextInCanvas("$" + GameVars.game.playerMoney, this.financesCtx, toPixelSize(1), 60, 25, GameVars.game.playerMoney < 100 ? getRangeColor(ColorType.RED) : "#00bcd4", 1);
+        drawPixelTextInCanvas("icecream P.", this.financesCtx, toPixelSize(1), 23, 32, "#00bcd4", 1);
+        drawPixelTextInCanvas("$" + GameVars.game.management.iceCreamPrice, this.financesCtx, toPixelSize(1), 59, 32, "#00bcd4", 1);
 
-        drawPixelTextInCanvas("rent", this.financesCtx, toPixelSize(1), 11, 33, "#00bcd4", 1);
-        drawPixelTextInCanvas("$-" + GameVars.game.rentCost + "/s", this.financesCtx, toPixelSize(1), 61, 33, "#00bcd4", 1);
+        drawPixelTextInCanvas("funds", this.financesCtx, toPixelSize(1), 13, 41, "#00bcd4", 1);
+        drawPixelTextInCanvas("$" + GameVars.game.playerMoney, this.financesCtx, toPixelSize(1), 60, 41, GameVars.game.playerMoney < 100 ? getRangeColor(ColorType.RED) : "#00bcd4", 1);
 
-        drawPixelTextInCanvas("workers", this.financesCtx, toPixelSize(1), 18, 41, "#00bcd4", 1);
-        drawPixelTextInCanvas("$-" + GameVars.game.management.getStaffPaymentCost() + "/s", this.financesCtx, toPixelSize(1), 61, 41, "#00bcd4", 1);
+        drawPixelTextInCanvas("rent", this.financesCtx, toPixelSize(1), 11, 49, "#00bcd4", 1);
+        drawPixelTextInCanvas("$-" + GameVars.game.rentCost + "/s", this.financesCtx, toPixelSize(1), 61, 49, "#00bcd4", 1);
 
-        drawPixelTextInCanvas("flour price", this.financesCtx, toPixelSize(1), 23, 49, "#00bcd4", 1);
-        drawPixelTextInCanvas("$" + (GameVars.game.flourCost / 100).toFixed(2), this.financesCtx, toPixelSize(1), 60, 49, "#00bcd4", 1);
+        drawPixelTextInCanvas("workers", this.financesCtx, toPixelSize(1), 18, 57, "#00bcd4", 1);
+        drawPixelTextInCanvas("$-" + GameVars.game.management.getStaffPaymentCost() + "/s", this.financesCtx, toPixelSize(1), 61, 57, "#00bcd4", 1);
 
-        drawPixelTextInCanvas("grain price", this.financesCtx, toPixelSize(1), 22, 57, "#00bcd4", 1);
-        drawPixelTextInCanvas("$" + (GameVars.game.grainCost / 100).toFixed(2), this.financesCtx, toPixelSize(1), 60, 57, "#00bcd4", 1);
+        drawPixelTextInCanvas("flour price", this.financesCtx, toPixelSize(1), 23, 65, "#00bcd4", 1);
+        drawPixelTextInCanvas("$" + (GameVars.game.flourCost / 100).toFixed(2), this.financesCtx, toPixelSize(1), 60, 65, "#00bcd4", 1);
+
+        drawPixelTextInCanvas("grain price", this.financesCtx, toPixelSize(1), 22, 73, "#00bcd4", 1);
+        drawPixelTextInCanvas("$" + (GameVars.game.grainCost / 100).toFixed(2), this.financesCtx, toPixelSize(1), 60, 73, "#00bcd4", 1);
     }
 
     drawBoardControlBtns() {
         genSmallBox(this.zoomCtx, 0, 0, 53, 50, toPixelSize(1), "#3e3846", "#1b1116");
+        genSmallBox(this.zoomCtx, 0, 10, 53, 17, toPixelSize(1), "#3e3846", "#1b1116");
         drawPixelTextInCanvas("zoom", this.zoomCtx, toPixelSize(1), 27, 6, "#00bcd4", 1);
 
         genSmallBox(this.zoomPlusCtx, 0, 0, 13, 13, toPixelSize(1), "#9bf2fa", this.plusClick ? "#ffffff66" : "#1b1116");

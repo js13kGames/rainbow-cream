@@ -21,6 +21,7 @@ let gameDiv;
 let gameOverDiv;
 let gameOverCanv;
 let isShowingFinishMenu;
+let isNewHighScore;
 let timeoutID;
 
 let soundBtnCanv;
@@ -165,7 +166,12 @@ const drawMainMenu = () => {
     });
 
     const bannerCenterX = Math.round(GameVars.gameW / 2 / toPixelSize(3));
-    genSmallBox(mainMenuCtx, -1, -1, GameVars.gameWdAsPixels + 2, 16, toPixelSize(2), "#9bf2fa", "#1b1116");
+    if (GameVars.highScore) {
+        genSmallBox(mainMenuCtx, -1, -1, GameVars.gameWdAsPixels + 2, 20, toPixelSize(2), "#9bf2fa", "#1b1116");
+        drawPixelTextInCanvas("best score: " + GameVars.highScore, mainMenuCtx, toPixelSize(1), GameVars.gameWdAsPixels / 2, 31, "#00bcd4", 1);
+    } else {
+        genSmallBox(mainMenuCtx, -1, -1, GameVars.gameWdAsPixels + 2, 16, toPixelSize(2), "#9bf2fa", "#1b1116");
+    }
     drawPixelTextInCanvas("rain", mainMenuCtx, toPixelSize(3), bannerCenterX - 17, 5, getLightColorByType(ColorType.BLUE), 1);
     drawPixelTextInCanvas("bow c", mainMenuCtx, toPixelSize(3), bannerCenterX, 5, getLightColorByType(ColorType.YELLOW), 1);
     drawPixelTextInCanvas("ream", mainMenuCtx, toPixelSize(3), bannerCenterX + 19, 5, getLightColorByType(ColorType.RED), 1);
@@ -196,6 +202,9 @@ const drawGameOverMenu = () => {
             drawPixelTextInCanvas("run out of funds $0 ", gameOverCtx, GameVars.pixelSize, GameVars.gameWdAsPixels / 2, (GameVars.gameHgAsPixels / 2) + 10, "#9bf2fa", 1);
         } else if (game.reputation == 0) {
             drawPixelTextInCanvas("run out of reputation", gameOverCtx, GameVars.pixelSize, GameVars.gameWdAsPixels / 2, (GameVars.gameHgAsPixels / 2) + 10, "#9bf2fa", 1);
+        }
+        if (isNewHighScore) {
+            drawPixelTextInCanvas("new highscore! " + GameVars.highScore, gameOverCtx, GameVars.pixelSize, GameVars.gameWdAsPixels / 2, (GameVars.gameHgAsPixels / 2) + 20, "#9bf2fa", 1);
         }
     }
 }
@@ -233,15 +242,26 @@ const gameLoop = (timeStamp) => {
 const handleGameOverScreen = () => {
     if (game.isGameOver && !isShowingFinishMenu) {
         isShowingFinishMenu = true;
+        updateHighScore();
         gameOverDiv.classList.remove("hidden");
         drawGameOverMenu();
         timeoutID = setTimeout(() => {
             isShowingFinishMenu = false;
             mainMenuDiv.classList.remove("hidden");
+            drawMainMenu();
             gameOverDiv.classList.add("hidden");
             gameDiv.innerHTML = "";
             clearTimeout(timeoutID);
         }, 3000)
+    }
+}
+
+const updateHighScore = () => {
+    isNewHighScore = false;
+    if (game.score > GameVars.highScore) {
+        localStorage.setItem(GameVars.storeId, game.score);
+        GameVars.highScore = game.score;
+        isNewHighScore = true;
     }
 }
 

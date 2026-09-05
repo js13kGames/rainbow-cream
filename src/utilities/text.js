@@ -87,6 +87,8 @@ const retrievePixelLetter = (letter) => {
 
         case '.':
             return dot;
+        case ':':
+            return colon;
         case '!':
             return excl;
         case '$':
@@ -369,6 +371,14 @@ const dot = [
     [false],
     [false],
     [false],
+    [false],
+    [true]
+];
+
+const colon = [
+    [false],
+    [false],
+    [true],
     [false],
     [true]
 ];
