@@ -12,16 +12,7 @@ export class Management {
         this.iceCreamPrice = 100;
         this.iceCreamPriceRatio = 6;
 
-        this.staffUnlockValue = 1000;
-        this.isStaffUnlocked = false;
-        this.staffCost = 4;
-        this.staffPayTimer = 0;
-        this.baseWorkerCost = 200;
-        this.staffSpeed = 1;
-        this.staffSpeedLvl = 0;
-        this.baseSpeedUpgradeCost = 400;
-
-        this.unicornHandlingUnlockedValue = 1400;
+        this.unicornHandlingUnlockedValue = 1000;
         this.isUnicornHandlingUnlocked = false;
         this.baseUnicornGrainConsumption = 2;
         this.baseUnicornIceCreamProduction = 1;
@@ -29,6 +20,15 @@ export class Management {
         this.yellowUnicornProductionSpeedLvl = 0;
         this.redUnicornProductionSpeedLvl = 0;
         this.baseUnicornProductionCost = 200;
+
+        this.staffUnlockValue = 1400;
+        this.isStaffUnlocked = false;
+        this.staffCost = 4;
+        this.staffPayTimer = 0;
+        this.baseWorkerCost = 200;
+        this.staffSpeed = 1;
+        this.staffSpeedLvl = 0;
+        this.baseSpeedUpgradeCost = 400;
     }
 
     unlockMenuEdit() {
@@ -59,6 +59,31 @@ export class Management {
         return false
     }
 
+    unlockUnicornHandling() {
+        if (!this.isUnicornHandlingUnlocked && GameVars.game.playerMoney >= this.unicornHandlingUnlockedValue) {
+            GameVars.game.pay(this.unicornHandlingUnlockedValue);
+            this.isUnicornHandlingUnlocked = true;
+        } else {
+            GameVars.sound.wrongSound();
+        }
+    }
+    unicornProductionSpeedUpgradeCost(colorType) {
+        return Math.round(this.baseUnicornProductionCost * (1 + (0.5 * this.getUnicornProductionSpeedLvlBasedOnColor(colorType))));
+    }
+    unicornGrainConsumption(colorType) {
+        return this.baseUnicornGrainConsumption + (this.baseUnicornGrainConsumption * this.getUnicornProductionSpeedLvlBasedOnColor(colorType));
+    }
+    unicornIceCreamProduction(colorType) {
+        return this.baseUnicornIceCreamProduction + (this.baseUnicornIceCreamProduction * this.getUnicornProductionSpeedLvlBasedOnColor(colorType));
+    }
+    getUnicornProductionSpeedLvlBasedOnColor(colorType) {
+        switch (colorType) {
+            case ColorType.BLUE: return this.blueUnicornProductionSpeedLvl;
+            case ColorType.YELLOW: return this.yellowUnicornProductionSpeedLvl;
+            case ColorType.RED: return this.redUnicornProductionSpeedLvl;
+        }
+    }
+
     unlockStaff() {
         if (!this.isStaffUnlocked && GameVars.game.playerMoney >= this.staffUnlockValue) {
             GameVars.game.pay(this.staffUnlockValue);
@@ -84,31 +109,6 @@ export class Management {
     }
     getStaffPaymentCost() {
         return 4 * (GameVars.game.board.iceCreamWorkers.length + GameVars.game.board.cashierWorkers.length + GameVars.game.board.supplyWorkers.length);
-    }
-
-    unlockUnicornHandling() {
-        if (!this.isUnicornHandlingUnlocked && GameVars.game.playerMoney >= this.unicornHandlingUnlockedValue) {
-            GameVars.game.pay(this.unicornHandlingUnlockedValue);
-            this.isUnicornHandlingUnlocked = true;
-        } else {
-            GameVars.sound.wrongSound();
-        }
-    }
-    unicornProductionSpeedUpgradeCost(colorType) {
-        return Math.round(this.baseUnicornProductionCost * (1 + (0.5 * this.getUnicornProductionSpeedLvlBasedOnColor(colorType))));
-    }
-    unicornGrainConsumption(colorType) {
-        return this.baseUnicornGrainConsumption + (this.baseUnicornGrainConsumption * this.getUnicornProductionSpeedLvlBasedOnColor(colorType));
-    }
-    unicornIceCreamProduction(colorType) {
-        return this.baseUnicornIceCreamProduction + (this.baseUnicornIceCreamProduction * this.getUnicornProductionSpeedLvlBasedOnColor(colorType));
-    }
-    getUnicornProductionSpeedLvlBasedOnColor(colorType) {
-        switch (colorType) {
-            case ColorType.BLUE: return this.blueUnicornProductionSpeedLvl;
-            case ColorType.YELLOW: return this.yellowUnicornProductionSpeedLvl;
-            case ColorType.RED: return this.redUnicornProductionSpeedLvl;
-        }
     }
 
     update() {

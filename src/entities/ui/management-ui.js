@@ -27,16 +27,6 @@ export class ManagementUI {
         });
         this.menuEditBtnCtx = this.menuEditBtn.getContext("2d");
 
-        this.staffMenu = new StaffUI(game, this.managementDiv);
-        this.staffBtn = createElem(this.managementDiv, "canvas", null, null, null, null, null, () => {
-            if (this.game.management.isStaffUnlocked) {
-                this.openMenu(MenuType.STAFF);
-            } else {
-                this.game.management.unlockStaff();
-            }
-        });
-        this.staffBtnCtx = this.staffBtn.getContext("2d");
-
         this.unicornMenu = new UnicornHandlingUI(game, this.managementDiv);
         this.unicornBtn = createElem(this.managementDiv, "canvas", null, null, null, null, null, () => {
             if (this.game.management.isUnicornHandlingUnlocked) {
@@ -47,6 +37,16 @@ export class ManagementUI {
         });
         this.unicornBtnCtx = this.unicornBtn.getContext("2d");
 
+        this.staffMenu = new StaffUI(game, this.managementDiv);
+        this.staffBtn = createElem(this.managementDiv, "canvas", null, null, null, null, null, () => {
+            if (this.game.management.isStaffUnlocked) {
+                this.openMenu(MenuType.STAFF);
+            } else {
+                this.game.management.unlockStaff();
+            }
+        });
+        this.staffBtnCtx = this.staffBtn.getContext("2d");
+
         this.resize();
     }
 
@@ -54,12 +54,12 @@ export class ManagementUI {
         this.currentMenu = newMenu;
 
         this.menuEditMenu.hide();
-        this.staffMenu.hide();
         this.unicornMenu.hide();
+        this.staffMenu.hide();
 
         if (this.currentMenu === MenuType.MENU_EDIT) this.menuEditMenu.show();
-        else if (this.currentMenu === MenuType.STAFF) this.staffMenu.show();
         else if (this.currentMenu === MenuType.UNICORN_HANDLING) this.unicornMenu.show();
+        else if (this.currentMenu === MenuType.STAFF) this.staffMenu.show();
     }
 
     resize() {
@@ -72,17 +72,17 @@ export class ManagementUI {
         setElemSize(this.menuEditBtn, toPixelSize(74), toPixelSize(12));
         this.menuEditBtn.style.translate = (this.xPos + toPixelSize(3)) + 'px ' + (this.yPos + toPixelSize(13)) + 'px';
 
-        setElemSize(this.staffBtn, toPixelSize(74), toPixelSize(12));
-        this.staffBtn.style.translate = (this.xPos + toPixelSize(3)) + 'px ' + (this.yPos + this.menuEditBtn.height + toPixelSize(15)) + 'px';
-
         setElemSize(this.unicornBtn, toPixelSize(74), toPixelSize(12));
-        this.unicornBtn.style.translate = (this.xPos + toPixelSize(3)) + 'px ' + (this.yPos + this.menuEditBtn.height + this.staffBtn.height + toPixelSize(17)) + 'px';
+        this.unicornBtn.style.translate = (this.xPos + toPixelSize(3)) + 'px ' + (this.yPos + this.menuEditBtn.height + toPixelSize(15)) + 'px';
+
+        setElemSize(this.staffBtn, toPixelSize(74), toPixelSize(12));
+        this.staffBtn.style.translate = (this.xPos + toPixelSize(3)) + 'px ' + (this.yPos + this.menuEditBtn.height + this.unicornBtn.height + toPixelSize(17)) + 'px';
     }
 
     draw() {
         if (this.currentMenu === MenuType.MENU_EDIT) this.menuEditMenu.draw(this.xPos, this.yPos + this.managementCanv.height);
-        else if (this.currentMenu === MenuType.STAFF) this.staffMenu.draw(this.xPos, this.yPos + this.managementCanv.height);
         else if (this.currentMenu === MenuType.UNICORN_HANDLING) this.unicornMenu.draw(this.xPos, this.yPos + this.managementCanv.height);
+        else if (this.currentMenu === MenuType.STAFF) this.staffMenu.draw(this.xPos, this.yPos + this.managementCanv.height);
 
         this.drawButtons();
     }
@@ -101,14 +101,6 @@ export class ManagementUI {
         genSmallBox(this.menuEditBtnCtx, 0, 0, 73, 11, toPixelSize(1), "#9bf2fa" + (isUnlocked || canAfford ? "" : "55"), "#1b1116");
         drawPixelTextInCanvas(isUnlocked ? "menu edit" : "menu $-" + cost, this.menuEditBtnCtx, toPixelSize(1), 37, 6, "#9bf2fa" + (isUnlocked || canAfford ? "" : "55"));
 
-        isUnlocked = this.game.management.isStaffUnlocked;
-        cost = this.game.management.staffUnlockValue;
-        canAfford = this.game.playerMoney >= cost;
-
-        this.staffBtnCtx.clearRect(0, 0, this.staffBtn.width, this.staffBtn.height);
-        genSmallBox(this.staffBtnCtx, 0, 0, 73, 11, toPixelSize(1), "#9bf2fa" + (isUnlocked || canAfford ? "" : "55"), "#1b1116");
-        drawPixelTextInCanvas(isUnlocked ? "Staff managing" : "Staff $-" + cost, this.staffBtnCtx, toPixelSize(1), 37, 6, "#9bf2fa" + (isUnlocked || canAfford ? "" : "55"));
-
         isUnlocked = this.game.management.isUnicornHandlingUnlocked;
         cost = this.game.management.unicornHandlingUnlockedValue;
         canAfford = this.game.playerMoney >= cost;
@@ -116,5 +108,13 @@ export class ManagementUI {
         this.unicornBtnCtx.clearRect(0, 0, this.unicornBtn.width, this.unicornBtn.height);
         genSmallBox(this.unicornBtnCtx, 0, 0, 73, 11, toPixelSize(1), "#9bf2fa" + (isUnlocked || canAfford ? "" : "55"), "#1b1116");
         drawPixelTextInCanvas(isUnlocked ? "unicorn handling" : "unicorn $-" + cost, this.unicornBtnCtx, toPixelSize(1), 37, 6, "#9bf2fa" + (isUnlocked || canAfford ? "" : "55"));
+
+        isUnlocked = this.game.management.isStaffUnlocked;
+        cost = this.game.management.staffUnlockValue;
+        canAfford = this.game.playerMoney >= cost;
+
+        this.staffBtnCtx.clearRect(0, 0, this.staffBtn.width, this.staffBtn.height);
+        genSmallBox(this.staffBtnCtx, 0, 0, 73, 11, toPixelSize(1), "#9bf2fa" + (isUnlocked || canAfford ? "" : "55"), "#1b1116");
+        drawPixelTextInCanvas(isUnlocked ? "Staff managing" : "Staff $-" + cost, this.staffBtnCtx, toPixelSize(1), 37, 6, "#9bf2fa" + (isUnlocked || canAfford ? "" : "55"));
     }
 }
