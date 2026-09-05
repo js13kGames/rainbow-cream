@@ -18,6 +18,7 @@ export class Board {
         this.y = 0;
         this.customerSpawnTimer = 0;
         this.customerNextSpawn = 2;
+        this.reputationSpawnMultiplier = 1;
 
         this.lastPixelSize = toBoardPixelSize(1);
 
@@ -190,8 +191,9 @@ export class Board {
 
         if (!GameVars.game.isTutorial && GameVars.game.management.getMaxFlavours() > 0) {
             if (!this.customers.find(c => c.boardY == 14)) {
-                if (this.customerSpawnTimer >= this.customerNextSpawn) {
-                    this.customerSpawnTimer -= this.customerNextSpawn;
+                const respawnRate = this.customerNextSpawn * this.getCustomerSpawnRatio();
+                if (this.customerSpawnTimer >= respawnRate) {
+                    this.customerSpawnTimer = 0;
                     this.customerNextSpawn = randomNumbOnRange(2, 6);
                     const customer = new Customer(6, 14, this.boardCtx);
                     this.customers.push(customer);
@@ -209,6 +211,10 @@ export class Board {
         this.iceCreamWorkers.forEach(e => e.update());
         this.cashierWorkers.forEach(e => e.update());
         this.supplyWorkers.forEach(e => e.update());
+    }
+
+    getCustomerSpawnRatio() {
+        return Math.max(0.2, 1 + this.reputationSpawnMultiplier * ((50 - GameVars.game.reputation) / 50));
     }
 
     draw() {
