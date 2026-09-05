@@ -30,7 +30,7 @@ export class Balcony extends Tile {
         if (!GameVars.game.pause) player.moveToBoardPos(this.boardX, this.boardY - 1);
         if (!this.interactionBallon && this.customer) {
             GameVars.sound.clickSound();
-            this.interactionBallon = createElem(this.gameDiv, "canvas", null, null, toBoardPixelSize(56), toBoardPixelSize(12), null, () => {
+            this.interactionBallon = createElem(this.gameDiv, "canvas", null, null, toBoardPixelSize(56), toBoardPixelSize(19), null, () => {
                 if (!GameVars.game.pause) {
                     if (this.checkIfOrderIsCorrect(player)) {
                         this.processDelivery(player);
@@ -46,9 +46,12 @@ export class Balcony extends Tile {
             this.updateInteractiveBallonPos();
             const ctx = this.interactionBallon.getContext("2d");
 
-            genSmallBox(ctx, 0, 0, 53, 9, toBoardPixelSize(1), "#000000", "#ffffff");
+            genSmallBox(ctx, 0, 0, 53, 16, toBoardPixelSize(1), "#000000", "#ffffff");
+            const iceCreamPriceWithTip = GameVars.game.getIceCreamCost(this.customer);
+            const iceCreamTip = iceCreamPriceWithTip - GameVars.game.management.iceCreamPrice;
             drawPixelTextInCanvas("complete $" + GameVars.game.getIceCreamCost(this.customer), ctx, toBoardPixelSize(1), 27, 5, "#000000", 1);
-            genSmallBox(ctx, 52, 8, 3, 3, toBoardPixelSize(1), "#000000", "#ffffff");
+            drawPixelTextInCanvas("$" + GameVars.game.management.iceCreamPrice + " + " + "tip $" + iceCreamTip, ctx, toBoardPixelSize(1), 27, 12, "#000000", 1);
+            genSmallBox(ctx, 52, 15, 3, 3, toBoardPixelSize(1), "#000000", "#ffffff");
         }
     }
 
@@ -82,7 +85,7 @@ export class Balcony extends Tile {
 
     updateInteractiveBallonPos() {
         this.interactionBallon && (this.interactionBallon.style.translate = (this.collisionObj.x - toBoardPixelSize(51)) + 'px ' +
-            (this.collisionObj.y + toBoardPixelSize(16) - toBoardPixelSize(19)) + 'px');
+            (this.collisionObj.y + toBoardPixelSize(16) - toBoardPixelSize(26)) + 'px');
     }
 
     update() {
