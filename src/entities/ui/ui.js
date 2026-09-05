@@ -120,8 +120,16 @@ export class UI {
         drawPixelTextInCanvas("finances", this.financesCtx, toPixelSize(1), 40, 8, "#00bcd4", 1);
 
         drawPixelTextInCanvas("reputation", this.financesCtx, toPixelSize(1), 22, 17, "#00bcd4", 1);
-        genSmallBox(this.financesCtx, 43, 14, 32, 5, toPixelSize(1), "#3e3846", "#1b1116");
-        genSmallBox(this.financesCtx, 43, 14, clamp((32 * this.game.reputation) / 100, 0, 32), 5, toPixelSize(1), "#00000000", getRangeColor(this.game.reputation));
+        drawPixelTextInCanvas(-GameVars.game.calculateBadReviewRatio(GameVars.game.management.iceCreamPrice), this.financesCtx, toPixelSize(1), 46, 17, "#00bcd4", 1);
+        genSmallBox(this.financesCtx, 49, 14, 20, 5, toPixelSize(1), "#3e3846", "#1b1116");
+        this.financesCtx.fillStyle = getRangeColor(this.game.reputation);
+        this.financesCtx.fillRect(
+            Math.round((49 * toPixelSize(1)) + toPixelSize(1)),
+            Math.round((14 * toPixelSize(1)) + toPixelSize(1)),
+            Math.round((clamp((20 * this.game.reputation) / 100, 0, 20) * toPixelSize(1)) - toPixelSize(1)),
+            Math.round((5 * toPixelSize(1)) - toPixelSize(1))
+        );
+        drawPixelTextInCanvas(GameVars.game.calculateGoodReviewRatio(GameVars.game.management.iceCreamPrice), this.financesCtx, toPixelSize(1), 74, 17, "#00bcd4", 1);
 
         drawPixelTextInCanvas("funds", this.financesCtx, toPixelSize(1), 13, 25, "#00bcd4", 1);
         drawPixelTextInCanvas("$" + GameVars.game.playerMoney, this.financesCtx, toPixelSize(1), 60, 25, GameVars.game.playerMoney < 100 ? getRangeColor(ColorType.RED) : "#00bcd4", 1);

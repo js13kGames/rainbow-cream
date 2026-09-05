@@ -42,30 +42,13 @@ export class MenuEditUI {
             }
         );
 
-        this.oneFlavourPrice = new PlusMinusUI(game, this.menuDiv, "1 flavour|price", "|",
+        this.iceCreamPrice = new PlusMinusUI(game, this.menuDiv, "icecream|price", "|",
             () => {
-                this.game.management.oneFlavourPrice++;
+                if (this.game.management.iceCreamPrice == 1) this.game.management.iceCreamPrice--;
+                this.game.management.iceCreamPrice += 10;
             },
             () => {
-                this.game.management.oneFlavourPrice = clamp(this.game.management.oneFlavourPrice - 1, 1, Number.MAX_SAFE_INTEGER);
-            }
-        );
-
-        this.twoFlavoursPrice = new PlusMinusUI(game, this.menuDiv, "2 flavour|price", "|",
-            () => {
-                this.game.management.twoFlavoursPrice++;
-            },
-            () => {
-                this.game.management.twoFlavoursPrice = clamp(this.game.management.twoFlavoursPrice - 1, 1, Number.MAX_SAFE_INTEGER);
-            }
-        );
-
-        this.threeFlavoursPrice = new PlusMinusUI(game, this.menuDiv, "3 flavour|price", "|",
-            () => {
-                this.game.management.threeFlavoursPrice++;
-            },
-            () => {
-                this.game.management.threeFlavoursPrice = clamp(this.game.management.threeFlavoursPrice - 1, 1, Number.MAX_SAFE_INTEGER);
+                this.game.management.iceCreamPrice = clamp(this.game.management.iceCreamPrice - 10, 1, Number.MAX_SAFE_INTEGER);
             }
         );
 
@@ -81,7 +64,7 @@ export class MenuEditUI {
     }
 
     resize() {
-        setElemSize(this.menuCanv, toPixelSize(80), toPixelSize(122));
+        setElemSize(this.menuCanv, toPixelSize(80), toPixelSize(82));
         this.menuCanv.style.translate = this.xPos + 'px ' + this.yPos + 'px';
 
         setElemSize(this.closeCanv, toPixelSize(10), toPixelSize(10));
@@ -103,7 +86,7 @@ export class MenuEditUI {
 
         this.resize();
 
-        genSmallBox(this.menuCtx, 0, 0, 79, 121, toPixelSize(1), "#3e3846", "#1b1116");
+        genSmallBox(this.menuCtx, 0, 0, 79, 81, toPixelSize(1), "#3e3846", "#1b1116");
         drawPixelTextInCanvas("Menu", this.menuCtx, toPixelSize(1), 40, 8, "#00bcd4", 1);
 
         genSmallBox(this.closeCtx, 0, 0, 9, 9, toPixelSize(1), "#9bf2fa", "#1b1116");
@@ -125,8 +108,6 @@ export class MenuEditUI {
         drawPixelTextInCanvas("red", this.redActiveCtx, toPixelSize(1), 9, 6, "#9bf2fa" + (isRedActive ? "" : "55"));
 
         this.numberOfFlavours.draw(this.xPos, this.yPos + toPixelSize(40), this.game.management.maxFlavourAmount, 1, 3);
-        this.oneFlavourPrice.draw(this.xPos, this.yPos + toPixelSize(60), this.game.management.oneFlavourPrice, 1, Number.MAX_SAFE_INTEGER);
-        this.twoFlavoursPrice.draw(this.xPos, this.yPos + toPixelSize(80), this.game.management.twoFlavoursPrice, 1, Number.MAX_SAFE_INTEGER);
-        this.threeFlavoursPrice.draw(this.xPos, this.yPos + toPixelSize(100), this.game.management.threeFlavoursPrice, 1, Number.MAX_SAFE_INTEGER);
+        this.iceCreamPrice.draw(this.xPos, this.yPos + toPixelSize(60), this.game.management.iceCreamPrice, 1, Number.MAX_SAFE_INTEGER);
     }
 }

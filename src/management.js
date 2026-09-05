@@ -9,9 +9,7 @@ export class Management {
         this.isYellowActive = true;
         this.isRedActive = true;
         this.maxFlavourAmount = 3;
-        this.oneFlavourPrice = 100;
-        this.twoFlavoursPrice = 125;
-        this.threeFlavoursPrice = 140;
+        this.iceCreamPrice = 100;
 
         this.staffUnlockValue = 1000;
         this.isStaffUnlocked = false;
@@ -38,13 +36,6 @@ export class Management {
             this.isMenuEditUnlocked = true;
         } else {
             GameVars.sound.wrongSound();
-        }
-    }
-    getFlavoursCost(flavourAmount) {
-        switch (flavourAmount) {
-            case 0: return this.oneFlavourPrice;
-            case 1: return this.twoFlavoursPrice;
-            case 2: return this.threeFlavoursPrice;
         }
     }
     getMaxFlavours() {

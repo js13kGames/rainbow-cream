@@ -14,6 +14,9 @@ export class Game {
         this.isTutorial = true;
         this.playerMoney = 500;
         this.reputation = 50;
+        this.baseMultiplier = 1;
+        this.baseChangeValue = 2;
+        this.minReputationFloor = 5;
 
         this.gameChangeDuration = 10;
 
@@ -42,19 +45,31 @@ export class Game {
 
     updateReputation(customer) {
         const tipLevel = this.getTipLevel(customer.patienceLevel);
-        if (tipLevel == 0) this.reputation--;
-        else if (tipLevel == 2) this.reputation++;
+        if (tipLevel == 0) {
+            this.reputation -= this.calculateBadReviewRatio(this.management.iceCreamPrice);
+        } else if (tipLevel == 2) {
+            this.reputation += this.calculateGoodReviewRatio(this.management.iceCreamPrice);
+        }
         this.reputation = clamp(this.reputation, 0, 100);
     }
 
     getIceCreamCost(customer) {
         const tipLevel = this.getTipLevel(customer.patienceLevel);
-        const iceCreamCost = this.management.getFlavoursCost(customer.flavoursAmount);
+        const iceCreamCost = this.management.iceCreamPrice;
         return Math.round(iceCreamCost + (tipLevel * iceCreamCost / 4));
     }
 
     getTipLevel(patienceLevel) {
         return patienceLevel < 33 ? 0 : patienceLevel < 66 ? 1 : 2;
+    }
+
+    calculateBadReviewRatio(price) {
+        const rep = Math.max(this.reputation, this.minReputationFloor);
+        return Math.max(1, Math.round(((price / rep) / (100 / 50)) * this.baseMultiplier) * this.baseChangeValue);
+    }
+
+    calculateGoodReviewRatio(price) {
+        return Math.max(1, Math.round(((this.reputation / price) / (50 / 100)) * this.baseMultiplier) * this.baseChangeValue);
     }
 
     pay(amount) {
@@ -77,7 +92,7 @@ export class Game {
             if (this.rentTimer >= this.rentDuration) {
                 this.rentTimer -= this.rentDuration;
                 this.playerMoney = clamp(this.playerMoney - this.rentCost, 0, this.playerMoney);
-                if (this.playerMoney == 0) {
+                if (this.playerMoney == 0 || this.reputation == 0) {
                     this.isGameRunning = false;
                     this.isGameOver = true;
                 }
