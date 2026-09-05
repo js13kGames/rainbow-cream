@@ -17,6 +17,7 @@ export class Game {
         this.baseMultiplier = 1;
         this.baseChangeValue = 2;
         this.minReputationFloor = 5;
+        this.maxReviewReward = 6;
 
         this.gameChangeDuration = 10;
 
@@ -65,11 +66,11 @@ export class Game {
 
     calculateBadReviewRatio(price) {
         const rep = Math.max(this.reputation, this.minReputationFloor);
-        return Math.max(1, Math.round(((price / rep) / (100 / 50)) * this.baseMultiplier) * this.baseChangeValue);
+        return Math.min(this.maxReviewReward, Math.max(1, Math.round(((price / rep) / (100 / 50)) * this.baseMultiplier) * this.baseChangeValue));
     }
 
     calculateGoodReviewRatio(price) {
-        return Math.max(1, Math.round(((this.reputation / price) / (50 / 100)) * this.baseMultiplier) * this.baseChangeValue);
+        return Math.min(this.maxReviewReward, Math.max(1, Math.round(((this.reputation / price) / (50 / 100)) * this.baseMultiplier) * this.baseChangeValue));
     }
 
     pay(amount) {
