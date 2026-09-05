@@ -107,11 +107,11 @@ export class StaffUI {
     }
 
     resize() {
-        setElemSize(this.staffCanv, toPixelSize(80), toPixelSize(99));
+        setElemSize(this.staffCanv, toPixelSize(80), toPixelSize(96));
         this.staffCanv.style.translate = this.xPos + 'px ' + this.yPos + 'px';
 
         setElemSize(this.closeCanv, toPixelSize(10), toPixelSize(10));
-        this.closeCanv.style.translate = this.xPos + 'px ' + this.yPos + 'px';
+        this.closeCanv.style.translate = (this.xPos + this.staffCanv.width - this.closeCanv.width - toPixelSize(1)) + 'px ' + (this.yPos + toPixelSize(1)) + 'px';
     }
 
     draw(parentX, parentY) {
@@ -120,25 +120,25 @@ export class StaffUI {
 
         this.resize();
 
-        genSmallBox(this.staffCtx, 0, 0, 79, 98, toPixelSize(1), "#3e3846", "#1b1116");
-        drawPixelTextInCanvas("staff", this.staffCtx, toPixelSize(1), 40, 8, "#00bcd4", 1);
+        genSmallBox(this.staffCtx, 0, 0, 79, 95, toPixelSize(1), "#3e3846", "#1b1116");
+        drawPixelTextInCanvas("staff", this.staffCtx, toPixelSize(1), 40, 6, "#00bcd4", 1);
 
         genSmallBox(this.closeCtx, 0, 0, 9, 9, toPixelSize(1), "#9bf2fa", "#1b1116");
         drawPixelTextInCanvas("x", this.closeCtx, toPixelSize(1), 5, 5, "#00bcd4");
 
-        this.hireIceCreamWorkerUI.draw(this.xPos, this.yPos + toPixelSize(14),
+        this.hireIceCreamWorkerUI.draw(this.xPos, this.yPos + toPixelSize(11),
             this.game.board.iceCreamWorkers.length, 0, this.game.board.balconies.length,
             this.game.management.iceCreamWorkerCost(this.game.board.iceCreamWorkers.length));
 
-        this.hireCashierWorkerUI.draw(this.xPos, this.yPos + toPixelSize(35),
+        this.hireCashierWorkerUI.draw(this.xPos, this.yPos + toPixelSize(32),
             this.game.board.cashierWorkers.length, 0, this.game.board.cashiers.length,
             this.game.management.cashierWorkerCost(this.game.board.cashierWorkers.length));
 
-        this.hireSupplyWorkerUI.draw(this.xPos, this.yPos + toPixelSize(56),
+        this.hireSupplyWorkerUI.draw(this.xPos, this.yPos + toPixelSize(53),
             this.game.board.supplyWorkers.length, 0, this.game.board.coneMachines.length,
             this.game.management.supplyWorkerCost(this.game.board.supplyWorkers.length));
 
-        this.speedUpgradeUI.draw(this.xPos, this.yPos + toPixelSize(77),
+        this.speedUpgradeUI.draw(this.xPos, this.yPos + toPixelSize(74),
             this.game.management.staffSpeedLvl, 0, Number.MAX_SAFE_INTEGER,
             this.game.management.speedUpgradeCost());
     }

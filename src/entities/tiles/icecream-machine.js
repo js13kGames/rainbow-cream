@@ -33,21 +33,23 @@ export class IceCreamMachine extends Tile {
     }
 
     createInteractionBallon() {
+        this.feedGrainClick = false;
+        this.takeIcecreamClick = false;
         const player = GameVars.game.board.player;
         if (!GameVars.game.pause) player.moveToBoardPos(this.boardX, this.boardY + 1);
         if (!this.takeIcecreamCanv) {
             GameVars.sound.clickSound();
             this.feedGrainCanv = createElem(this.gameDiv, "canvas", null, null, toBoardPixelSize(61), toBoardPixelSize(10), null, () => {
+                this.feedGrainClick = true;
                 if (!GameVars.game.pause) {
                     GameVars.sound.clickSound();
                     this.feedGrain();
                 }
-            });
-            const feedGrainCtx = this.feedGrainCanv.getContext("2d");
-            genSmallBox(feedGrainCtx, 0, 0, 60, 9, toBoardPixelSize(1), "#000000", "#ffffff");
-            drawPixelTextInCanvas("feed grain $-" + this.grainPrice(), feedGrainCtx, toBoardPixelSize(1), 30, 5, "#000000", 1);
+            }, () => setTimeout(() => this.feedGrainClick = false, 50));
+            this.feedGrainCtx = this.feedGrainCanv.getContext("2d");
 
             this.takeIcecreamCanv = createElem(this.gameDiv, "canvas", null, null, toBoardPixelSize(56), toBoardPixelSize(12), null, () => {
+                this.takeIcecreamClick = true;
                 if (!GameVars.game.pause) {
                     if (player.hasCone && this.iceCreamAmount > 10 && player.iceCreamColors.length < 3) {
                         GameVars.sound.clickSound();
@@ -65,14 +67,9 @@ export class IceCreamMachine extends Tile {
                         GameVars.sound.wrongSound();
                     }
                 }
-            });
-
+            }, () => setTimeout(() => this.takeIcecreamClick = false, 50));
             this.updateInteractiveBallonPos();
-            const takeIcecreamCtx = this.takeIcecreamCanv.getContext("2d");
-
-            genSmallBox(takeIcecreamCtx, 0, 0, 53, 9, toBoardPixelSize(1), "#000000", "#ffffff");
-            drawPixelTextInCanvas("take icecream", takeIcecreamCtx, toBoardPixelSize(1), 27, 5, "#000000", 1);
-            genSmallBox(takeIcecreamCtx, 52, 8, 3, 3, toBoardPixelSize(1), "#000000", "#ffffff");
+            this.takeIcecreamCtx = this.takeIcecreamCanv.getContext("2d");
         }
     }
 
@@ -162,6 +159,20 @@ export class IceCreamMachine extends Tile {
             toBoardPixelSize((this.boardY * GameVars.tileSize) - 19),
             toBoardPixelSize((12 * this.iceCreamAmount) / 100), toBoardPixelSize(2)
         );
+        this.drawInteractionBallon();
+    }
+
+    drawInteractionBallon() {
+        if (this.takeIcecreamCanv) {
+            this.feedGrainCtx.clearRect(0, 0, this.feedGrainCanv.width, this.feedGrainCanv.height);
+            genSmallBox(this.feedGrainCtx, 0, 0, 60, 9, toBoardPixelSize(1), "#000000", this.feedGrainClick ? "#ffffff66" : "#ffffff");
+            drawPixelTextInCanvas("feed grain $-" + this.grainPrice(), this.feedGrainCtx, toBoardPixelSize(1), 30, 5, "#000000", 1);
+
+            this.takeIcecreamCtx.clearRect(0, 0, this.takeIcecreamCanv.width, this.takeIcecreamCanv.height);
+            genSmallBox(this.takeIcecreamCtx, 0, 0, 53, 9, toBoardPixelSize(1), "#000000", this.takeIcecreamClick ? "#ffffff66" : "#ffffff");
+            drawPixelTextInCanvas("take icecream", this.takeIcecreamCtx, toBoardPixelSize(1), 27, 5, "#000000", 1);
+            genSmallBox(this.takeIcecreamCtx, 52, 8, 3, 3, toBoardPixelSize(1), "#000000", "#ffffff");
+        }
     }
 
     drawHighlight(color) {

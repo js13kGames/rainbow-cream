@@ -25,10 +25,12 @@ export class CashierMachine extends Tile {
     }
 
     createInteractionBallon() {
+        this.orderClick = false;
         if (!GameVars.game.pause) GameVars.game.board.player.moveToBoardPos(this.boardX, this.boardY - 1);
         if (!this.interactionBallon) {
             GameVars.sound.clickSound();
             this.interactionBallon = createElem(this.gameDiv, "canvas", null, null, toBoardPixelSize(44), toBoardPixelSize(12), null, () => {
+                this.orderClick = true;
                 if (!GameVars.game.pause) {
                     if (this.hasClient()) {
                         GameVars.sound.clickSound();
@@ -36,14 +38,9 @@ export class CashierMachine extends Tile {
                         this.destroyInteractionBallon();
                     }
                 }
-            });
-
+            }, () => setTimeout(() => this.orderClick = false, 50));
             this.updateInteractiveBallonPos();
-            const ctx = this.interactionBallon.getContext("2d");
-
-            genSmallBox(ctx, 0, 0, 41, 9, toBoardPixelSize(1), "#000000", "#ffffff");
-            drawPixelTextInCanvas("take order", ctx, toBoardPixelSize(1), 21, 5, "#000000", 1);
-            genSmallBox(ctx, 40, 8, 3, 3, toBoardPixelSize(1), "#000000", "#ffffff");
+            this.interactionBallonCtx = this.interactionBallon.getContext("2d");
         }
     }
 
@@ -86,6 +83,16 @@ export class CashierMachine extends Tile {
                 "lc3": "#a80000", "dc3": "#641f14",
             }
         );
+        this.drawInteractionBallon();
+    }
+
+    drawInteractionBallon() {
+        if (this.interactionBallon) {
+            this.interactionBallonCtx.clearRect(0, 0, this.interactionBallon.width, this.interactionBallon.height);
+            genSmallBox(this.interactionBallonCtx, 0, 0, 41, 9, toBoardPixelSize(1), "#000000", this.orderClick ? "#ffffff66" : "#ffffff");
+            drawPixelTextInCanvas("take order", this.interactionBallonCtx, toBoardPixelSize(1), 21, 5, "#000000", 1);
+            genSmallBox(this.interactionBallonCtx, 40, 8, 3, 3, toBoardPixelSize(1), "#000000", "#ffffff");
+        }
     }
 
     drawHighlight(color) {

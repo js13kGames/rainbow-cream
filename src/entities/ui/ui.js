@@ -22,8 +22,9 @@ export class UI {
         this.pauseCanvCtx = this.pauseCanv.getContext("2d");
 
         this.pauseBtnCanv = createElem(this.uiDiv, "canvas", null, null, null, null, null, () => {
+            this.pauseClick = true;
             this.game.pause = !this.game.pause;
-        });
+        }, () => setTimeout(() => this.pauseClick = false, 50));
         this.pauseBtnCtx = this.pauseBtnCanv.getContext("2d");
     }
 
@@ -65,7 +66,7 @@ export class UI {
     }
 
     resize() {
-        setElemSize(this.financesCanv, toPixelSize(80), toPixelSize(80));
+        setElemSize(this.financesCanv, toPixelSize(80), toPixelSize(79));
         this.financesCanv.style.translate = (GameVars.gameW - this.financesCanv.width - toPixelSize(8)) + 'px ' + (toPixelSize(8)) + 'px';
 
         setElemSize(this.pauseCanv, toPixelSize(60), toPixelSize(20));
@@ -74,7 +75,7 @@ export class UI {
         setElemSize(this.pauseBtnCanv, toPixelSize(20), toPixelSize(20));
         this.pauseBtnCanv.style.translate = ((GameVars.gameW - this.pauseBtnCanv.width) / 2) + 'px ' + (toPixelSize(8)) + 'px';
 
-        setElemSize(this.zoomCanv, toPixelSize(54), toPixelSize(51));
+        setElemSize(this.zoomCanv, toPixelSize(54), toPixelSize(48));
         const zoomPosX = GameVars.gameW - this.zoomCanv.width - toPixelSize(8);
         const zoomPosY = GameVars.gameH - this.zoomCanv.height - toPixelSize(8);
         this.zoomCanv.style.translate = zoomPosX + 'px ' + zoomPosY + 'px';
@@ -86,7 +87,7 @@ export class UI {
         this.zoomMinus.style.translate = (zoomPosX + toPixelSize(30)) + 'px ' + (zoomPosY + toPixelSize(12)) + 'px';
 
         setElemSize(this.resetLevelBtn, toPixelSize(46), toPixelSize(17));
-        this.resetLevelBtn.style.translate = (zoomPosX + toPixelSize(4)) + 'px ' + (zoomPosY + toPixelSize(30)) + 'px';
+        this.resetLevelBtn.style.translate = (zoomPosX + toPixelSize(4)) + 'px ' + (zoomPosY + toPixelSize(29)) + 'px';
 
         this.managementUI.resize();
     }
@@ -99,15 +100,15 @@ export class UI {
     }
 
     drawPause() {
+        this.pauseBtnCtx.clearRect(0, 0, this.pauseBtnCanv.width, this.pauseBtnCanv.height);
+        genSmallBox(this.pauseBtnCtx, 0, 0, 19, 19, toPixelSize(1), "#9bf2fa", this.pauseClick ? "#ffffffbb" : "#1b1116");
+        drawPixelTextInCanvas(this.game.pause ? '{' : '}', this.pauseBtnCtx, toPixelSize(1), 10, 10, "#9bf2fa", 2);
+
         this.pauseCanvCtx.clearRect(0, 0, this.pauseCanv.width, this.pauseCanv.height);
         if (this.game.pause) {
             genSmallBox(this.pauseCanvCtx, 0, 0, 59, 19, toPixelSize(1), "#3e3846", "#1b1116");
             drawPixelTextInCanvas('pause', this.pauseCanvCtx, toPixelSize(1), 30, 10, "#00bcd4", 2);
         }
-
-        this.pauseBtnCtx.clearRect(0, 0, this.pauseBtnCanv.width, this.pauseBtnCanv.height);
-        genSmallBox(this.pauseBtnCtx, 0, 0, 19, 19, toPixelSize(1), "#9bf2fa", "#1b1116");
-        drawPixelTextInCanvas(this.game.pause ? '{' : '}', this.pauseBtnCtx, toPixelSize(1), 10, 10, "#9bf2fa", 2);
     }
 
     drawFinances() {
@@ -116,21 +117,21 @@ export class UI {
         const board = this.game.board;
         const hasWorkers = board.iceCreamWorkers.length > 0 || board.cashierWorkers.length > 0 || board.supplyWorkers.length > 0;
         const amountOfFinances = 3 + (hasWorkers ? 1 : 0);
-        genSmallBox(this.financesCtx, 0, 0, 79, 79, toPixelSize(1), "#3e3846", "#1b1116");
+        genSmallBox(this.financesCtx, 0, 0, 79, 78, toPixelSize(1), "#3e3846", "#1b1116");
         genSmallBox(this.financesCtx, 0, 0, 79, 11, toPixelSize(1), "#3e3846", "#1b1116");
-        drawPixelTextInCanvas("finances", this.financesCtx, toPixelSize(1), 40, 7, "#00bcd4", 1);
+        drawPixelTextInCanvas("finances", this.financesCtx, toPixelSize(1), 40, 6, "#00bcd4", 1);
 
-        drawPixelTextInCanvas("score", this.financesCtx, toPixelSize(1), 13, 16, "#00bcd4", 1);
-        drawPixelTextInCanvas(GameVars.game.score, this.financesCtx, toPixelSize(1), 60, 16, "#00bcd4", 1);
+        drawPixelTextInCanvas("funds", this.financesCtx, toPixelSize(1), 13, 16, "#00bcd4", 1);
+        drawPixelTextInCanvas("$" + GameVars.game.playerMoney, this.financesCtx, toPixelSize(1), 60, 16, GameVars.game.playerMoney < 100 ? getRangeColor(ColorType.RED) : "#00bcd4", 1);
 
         genSmallBox(this.financesCtx, 0, 20, 79, 16, toPixelSize(1), "#3e3846", "#1b1116");
 
         drawPixelTextInCanvas("reputation", this.financesCtx, toPixelSize(1), 22, 25, "#00bcd4", 1);
         drawPixelTextInCanvas(-GameVars.game.calculateBadReviewRatio(GameVars.game.management.iceCreamPrice), this.financesCtx, toPixelSize(1), 46, 25, "#00bcd4", 1);
-        genSmallBox(this.financesCtx, 49, 22, 20, 5, toPixelSize(1), "#3e3846", "#1b1116");
+        genSmallBox(this.financesCtx, 50, 22, 19, 5, toPixelSize(1), "#3e3846", "#1b1116");
         this.financesCtx.fillStyle = getRangeColor(this.game.reputation);
         this.financesCtx.fillRect(
-            Math.round((49 * toPixelSize(1)) + toPixelSize(1)),
+            Math.round((50 * toPixelSize(1)) + toPixelSize(1)),
             Math.round((22 * toPixelSize(1)) + toPixelSize(1)),
             Math.round((clamp((20 * this.game.reputation) / 100, 0, 20) * toPixelSize(1)) - toPixelSize(1)),
             Math.round((5 * toPixelSize(1)) - toPixelSize(1))
@@ -140,24 +141,25 @@ export class UI {
         drawPixelTextInCanvas("icecream P.", this.financesCtx, toPixelSize(1), 23, 32, "#00bcd4", 1);
         drawPixelTextInCanvas("$" + GameVars.game.management.iceCreamPrice, this.financesCtx, toPixelSize(1), 59, 32, "#00bcd4", 1);
 
-        drawPixelTextInCanvas("funds", this.financesCtx, toPixelSize(1), 13, 41, "#00bcd4", 1);
-        drawPixelTextInCanvas("$" + GameVars.game.playerMoney, this.financesCtx, toPixelSize(1), 60, 41, GameVars.game.playerMoney < 100 ? getRangeColor(ColorType.RED) : "#00bcd4", 1);
+        drawPixelTextInCanvas("rent", this.financesCtx, toPixelSize(1), 11, 41, "#00bcd4", 1);
+        drawPixelTextInCanvas("$-" + GameVars.game.rentCost + "/s", this.financesCtx, toPixelSize(1), 61, 41, "#00bcd4", 1);
 
-        drawPixelTextInCanvas("rent", this.financesCtx, toPixelSize(1), 11, 49, "#00bcd4", 1);
-        drawPixelTextInCanvas("$-" + GameVars.game.rentCost + "/s", this.financesCtx, toPixelSize(1), 61, 49, "#00bcd4", 1);
+        drawPixelTextInCanvas("workers", this.financesCtx, toPixelSize(1), 18, 48, "#00bcd4", 1);
+        drawPixelTextInCanvas("$-" + GameVars.game.management.getStaffPaymentCost() + "/s", this.financesCtx, toPixelSize(1), 61, 48, "#00bcd4", 1);
 
-        drawPixelTextInCanvas("workers", this.financesCtx, toPixelSize(1), 18, 57, "#00bcd4", 1);
-        drawPixelTextInCanvas("$-" + GameVars.game.management.getStaffPaymentCost() + "/s", this.financesCtx, toPixelSize(1), 61, 57, "#00bcd4", 1);
+        genSmallBox(this.financesCtx, 0, 52, 79, 16, toPixelSize(1), "#3e3846", "#1b1116");
+        drawPixelTextInCanvas("flour price", this.financesCtx, toPixelSize(1), 23, 57, "#00bcd4", 1);
+        drawPixelTextInCanvas("$" + (GameVars.game.flourCost / 100).toFixed(2), this.financesCtx, toPixelSize(1), 60, 57, "#00bcd4", 1);
 
-        drawPixelTextInCanvas("flour price", this.financesCtx, toPixelSize(1), 23, 65, "#00bcd4", 1);
-        drawPixelTextInCanvas("$" + (GameVars.game.flourCost / 100).toFixed(2), this.financesCtx, toPixelSize(1), 60, 65, "#00bcd4", 1);
+        drawPixelTextInCanvas("grain price", this.financesCtx, toPixelSize(1), 22, 64, "#00bcd4", 1);
+        drawPixelTextInCanvas("$" + (GameVars.game.grainCost / 100).toFixed(2), this.financesCtx, toPixelSize(1), 60, 64, "#00bcd4", 1);
 
-        drawPixelTextInCanvas("grain price", this.financesCtx, toPixelSize(1), 22, 73, "#00bcd4", 1);
-        drawPixelTextInCanvas("$" + (GameVars.game.grainCost / 100).toFixed(2), this.financesCtx, toPixelSize(1), 60, 73, "#00bcd4", 1);
+        drawPixelTextInCanvas("score", this.financesCtx, toPixelSize(1), 13, 73, "#00bcd4", 1);
+        drawPixelTextInCanvas(GameVars.game.score, this.financesCtx, toPixelSize(1), 60, 74, "#00bcd4", 1);
     }
 
     drawBoardControlBtns() {
-        genSmallBox(this.zoomCtx, 0, 0, 53, 50, toPixelSize(1), "#3e3846", "#1b1116");
+        genSmallBox(this.zoomCtx, 0, 0, 53, 47, toPixelSize(1), "#3e3846", "#1b1116");
         genSmallBox(this.zoomCtx, 0, 10, 53, 17, toPixelSize(1), "#3e3846", "#1b1116");
         drawPixelTextInCanvas("zoom", this.zoomCtx, toPixelSize(1), 27, 6, "#00bcd4", 1);
 

@@ -26,11 +26,13 @@ export class Balcony extends Tile {
     }
 
     createInteractionBallon() {
+        this.orderClick = false;
         const player = GameVars.game.board.player;
         if (!GameVars.game.pause) player.moveToBoardPos(this.boardX, this.boardY - 1);
         if (!this.interactionBallon && this.customer) {
             GameVars.sound.clickSound();
-            this.interactionBallon = createElem(this.gameDiv, "canvas", null, null, toBoardPixelSize(56), toBoardPixelSize(19), null, () => {
+            this.interactionBallon = createElem(this.gameDiv, "canvas", null, null, toBoardPixelSize(64), toBoardPixelSize(19), null, () => {
+                this.orderClick = true;
                 if (!GameVars.game.pause) {
                     if (this.checkIfOrderIsCorrect(player)) {
                         this.processDelivery(player);
@@ -41,17 +43,9 @@ export class Balcony extends Tile {
                         GameVars.sound.wrongSound();
                     }
                 }
-            });
-
+            }, () => setTimeout(() => this.orderClick = false, 50));
             this.updateInteractiveBallonPos();
-            const ctx = this.interactionBallon.getContext("2d");
-
-            genSmallBox(ctx, 0, 0, 53, 16, toBoardPixelSize(1), "#000000", "#ffffff");
-            const iceCreamPriceWithTip = GameVars.game.getIceCreamCost(this.customer);
-            const iceCreamTip = iceCreamPriceWithTip - GameVars.game.management.iceCreamPrice;
-            drawPixelTextInCanvas("complete $" + GameVars.game.getIceCreamCost(this.customer), ctx, toBoardPixelSize(1), 27, 5, "#000000", 1);
-            drawPixelTextInCanvas("$" + GameVars.game.management.iceCreamPrice + " + " + "tip $" + iceCreamTip, ctx, toBoardPixelSize(1), 27, 12, "#000000", 1);
-            genSmallBox(ctx, 52, 15, 3, 3, toBoardPixelSize(1), "#000000", "#ffffff");
+            this.interactionBallonCtx = this.interactionBallon.getContext("2d");
         }
     }
 
@@ -84,8 +78,8 @@ export class Balcony extends Tile {
     }
 
     updateInteractiveBallonPos() {
-        this.interactionBallon && (this.interactionBallon.style.translate = (this.collisionObj.x - toBoardPixelSize(51)) + 'px ' +
-            (this.collisionObj.y + toBoardPixelSize(16) - toBoardPixelSize(26)) + 'px');
+        this.interactionBallon && (this.interactionBallon.style.translate = (this.collisionObj.x - toBoardPixelSize(59)) + 'px ' +
+            (this.collisionObj.y + toBoardPixelSize(16) - toBoardPixelSize(27)) + 'px');
     }
 
     update() {
@@ -167,6 +161,19 @@ export class Balcony extends Tile {
                 ((this.boardY - 1) * GameVars.tileSize) + 6,
                 this.iceCreamColors
             );
+        }
+        this.drawInteractionBallon();
+    }
+
+    drawInteractionBallon() {
+        if (this.interactionBallon) {
+            this.interactionBallonCtx.clearRect(0, 0, this.interactionBallon.width, this.interactionBallon.height);
+            genSmallBox(this.interactionBallonCtx, 0, 0, 61, 16, toBoardPixelSize(1), "#000000", this.orderClick ? "#ffffff66" : "#ffffff");
+            const iceCreamPriceWithTip = GameVars.game.getIceCreamCost(this.customer);
+            const iceCreamTip = iceCreamPriceWithTip - GameVars.game.management.iceCreamPrice;
+            drawPixelTextInCanvas("complete $" + GameVars.game.getIceCreamCost(this.customer), this.interactionBallonCtx, toBoardPixelSize(1), 31, 5, "#000000", 1);
+            drawPixelTextInCanvas("$" + GameVars.game.management.iceCreamPrice + " + " + "tip $" + iceCreamTip, this.interactionBallonCtx, toBoardPixelSize(1), 31, 12, "#000000", 1);
+            genSmallBox(this.interactionBallonCtx, 60, 15, 3, 3, toBoardPixelSize(1), "#000000", "#ffffff");
         }
     }
 

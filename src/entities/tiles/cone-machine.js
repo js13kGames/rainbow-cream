@@ -27,21 +27,23 @@ export class ConeMachine extends Tile {
     }
 
     createInteractionBallon() {
+        this.buyFlourClick = false;
+        this.takeConeClick = false;
         const player = GameVars.game.board.player;
         if (!GameVars.game.pause) player.moveToBoardPos(this.boardX, this.boardY + 1);
         if (!this.takeCone) {
             GameVars.sound.clickSound();
             this.buyFlour = createElem(this.gameDiv, "canvas", null, null, toBoardPixelSize(62), toBoardPixelSize(10), null, () => {
+                this.buyFlourClick = true;
                 if (!GameVars.game.pause) {
                     GameVars.sound.clickSound();
                     this.addFlour();
                 }
-            });
-            const buyFlourCtx = this.buyFlour.getContext("2d");
-            genSmallBox(buyFlourCtx, 0, 0, 60, 9, toBoardPixelSize(1), "#000000", "#ffffff");
-            drawPixelTextInCanvas("add flour $-" + this.flourPrice(), buyFlourCtx, toBoardPixelSize(1), 31, 5, "#000000", 1);
+            }, () => setTimeout(() => this.buyFlourClick = false, 50));
+            this.buyFlourCtx = this.buyFlour.getContext("2d");
 
             this.takeCone = createElem(this.gameDiv, "canvas", null, null, toBoardPixelSize(44), toBoardPixelSize(12), null, () => {
+                this.takeConeClick = true;
                 if (!GameVars.game.pause) {
                     if (!player.hasCone && this.flourAmount >= 10) {
                         GameVars.sound.clickSound();
@@ -55,14 +57,9 @@ export class ConeMachine extends Tile {
                         GameVars.sound.wrongSound();
                     }
                 }
-            });
-
+            }, () => setTimeout(() => this.takeConeClick = false, 50));
             this.updateInteractiveBallonPos();
-            const takeConeCtx = this.takeCone.getContext("2d");
-
-            genSmallBox(takeConeCtx, 0, 0, 41, 9, toBoardPixelSize(1), "#000000", "#ffffff");
-            drawPixelTextInCanvas("take cone", takeConeCtx, toBoardPixelSize(1), 21, 5, "#000000", 1);
-            genSmallBox(takeConeCtx, 40, 8, 3, 3, toBoardPixelSize(1), "#000000", "#ffffff");
+            this.takeConeCtx = this.takeCone.getContext("2d");
         }
     }
 
@@ -115,6 +112,20 @@ export class ConeMachine extends Tile {
             toBoardPixelSize((this.boardY * GameVars.tileSize) - 19),
             toBoardPixelSize((12 * this.flourAmount) / 100), toBoardPixelSize(2)
         );
+        this.drawInteractionBallon();
+    }
+
+    drawInteractionBallon() {
+        if (this.takeCone) {
+            this.buyFlourCtx.clearRect(0, 0, this.buyFlour.width, this.buyFlour.height);
+            genSmallBox(this.buyFlourCtx, 0, 0, 60, 9, toBoardPixelSize(1), "#000000", this.buyFlourClick ? "#ffffff66" : "#ffffff");
+            drawPixelTextInCanvas("add flour $-" + this.flourPrice(), this.buyFlourCtx, toBoardPixelSize(1), 31, 5, "#000000", 1);
+
+            this.takeConeCtx.clearRect(0, 0, this.takeCone.width, this.takeCone.height);
+            genSmallBox(this.takeConeCtx, 0, 0, 41, 9, toBoardPixelSize(1), "#000000", this.takeConeClick ? "#ffffff66" : "#ffffff");
+            drawPixelTextInCanvas("take cone", this.takeConeCtx, toBoardPixelSize(1), 21, 5, "#000000", 1);
+            genSmallBox(this.takeConeCtx, 40, 8, 3, 3, toBoardPixelSize(1), "#000000", "#ffffff");
+        }
     }
 
     drawHighlight(color) {

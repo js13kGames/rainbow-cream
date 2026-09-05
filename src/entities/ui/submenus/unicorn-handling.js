@@ -78,11 +78,12 @@ export class UnicornHandlingUI {
     }
 
     resize() {
-        setElemSize(this.unicornCanv, toPixelSize(80), toPixelSize(78));
+        setElemSize(this.unicornCanv, toPixelSize(80), toPixelSize(75));
         this.unicornCanv.style.translate = this.xPos + 'px ' + this.yPos + 'px';
 
         setElemSize(this.closeCanv, toPixelSize(10), toPixelSize(10));
-        this.closeCanv.style.translate = this.xPos + 'px ' + this.yPos + 'px';
+        this.closeCanv.style.translate = (this.xPos + this.unicornCanv.width - this.closeCanv.width - toPixelSize(1)) + 'px ' + (this.yPos + toPixelSize(1)) + 'px';
+
     }
 
     draw(parentX, parentY) {
@@ -91,21 +92,21 @@ export class UnicornHandlingUI {
 
         this.resize();
 
-        genSmallBox(this.unicornCtx, 0, 0, 79, 77, toPixelSize(1), "#3e3846", "#1b1116");
-        drawPixelTextInCanvas("unicorn handling", this.unicornCtx, toPixelSize(1), 40, 8, "#00bcd4", 1);
+        genSmallBox(this.unicornCtx, 0, 0, 79, 74, toPixelSize(1), "#3e3846", "#1b1116");
+        drawPixelTextInCanvas("unicorn handling", this.unicornCtx, toPixelSize(1), 35, 6, "#00bcd4", 1);
 
         genSmallBox(this.closeCtx, 0, 0, 9, 9, toPixelSize(1), "#9bf2fa", "#1b1116");
         drawPixelTextInCanvas("x", this.closeCtx, toPixelSize(1), 5, 5, "#00bcd4");
 
-        this.blueProductionUI.draw(this.xPos, this.yPos + toPixelSize(14),
+        this.blueProductionUI.draw(this.xPos, this.yPos + toPixelSize(11),
             this.game.management.blueUnicornProductionSpeedLvl, 0, Number.MAX_SAFE_INTEGER,
             this.game.management.unicornProductionSpeedUpgradeCost(ColorType.BLUE));
 
-        this.yellowProductionUI.draw(this.xPos, this.yPos + toPixelSize(35),
+        this.yellowProductionUI.draw(this.xPos, this.yPos + toPixelSize(32),
             this.game.management.yellowUnicornProductionSpeedLvl, 0, Number.MAX_SAFE_INTEGER,
             this.game.management.unicornProductionSpeedUpgradeCost(ColorType.YELLOW));
 
-        this.redProductionUI.draw(this.xPos, this.yPos + toPixelSize(56),
+        this.redProductionUI.draw(this.xPos, this.yPos + toPixelSize(53),
             this.game.management.redUnicornProductionSpeedLvl, 0, Number.MAX_SAFE_INTEGER,
             this.game.management.unicornProductionSpeedUpgradeCost(ColorType.RED));
     }

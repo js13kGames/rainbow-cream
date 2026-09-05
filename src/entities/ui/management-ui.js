@@ -19,32 +19,35 @@ export class ManagementUI {
 
         this.menuEditMenu = new MenuEditUI(game, this.managementDiv);
         this.menuEditBtn = createElem(this.managementDiv, "canvas", null, null, null, null, null, () => {
+            this.menuClick = true;
             if (this.game.management.isMenuEditUnlocked) {
                 this.openMenu(MenuType.MENU_EDIT);
             } else {
                 this.game.management.unlockMenuEdit();
             }
-        });
+        }, () => setTimeout(() => this.menuClick = false, 50));
         this.menuEditBtnCtx = this.menuEditBtn.getContext("2d");
 
         this.unicornMenu = new UnicornHandlingUI(game, this.managementDiv);
         this.unicornBtn = createElem(this.managementDiv, "canvas", null, null, null, null, null, () => {
+            this.unicornClick = true;
             if (this.game.management.isUnicornHandlingUnlocked) {
                 this.openMenu(MenuType.UNICORN_HANDLING);
             } else {
                 this.game.management.unlockUnicornHandling();
             }
-        });
+        }, () => setTimeout(() => this.unicornClick = false, 50));
         this.unicornBtnCtx = this.unicornBtn.getContext("2d");
 
         this.staffMenu = new StaffUI(game, this.managementDiv);
         this.staffBtn = createElem(this.managementDiv, "canvas", null, null, null, null, null, () => {
+            this.staffClick = true;
             if (this.game.management.isStaffUnlocked) {
                 this.openMenu(MenuType.STAFF);
             } else {
                 this.game.management.unlockStaff();
             }
-        });
+        }, () => setTimeout(() => this.staffClick = false, 50));
         this.staffBtnCtx = this.staffBtn.getContext("2d");
 
         this.resize();
@@ -91,14 +94,14 @@ export class ManagementUI {
         this.managementCtx.clearRect(0, 0, this.managementCanv.width, this.managementCanv.height);
         genSmallBox(this.managementCtx, 0, 0, 79, 55, toPixelSize(1), "#3e3846", "#1b1116");
         genSmallBox(this.managementCtx, 0, 0, 79, 11, toPixelSize(1), "#3e3846", "#1b1116");
-        drawPixelTextInCanvas("management", this.managementCtx, toPixelSize(1), 40, 7, "#00bcd4", 1);
+        drawPixelTextInCanvas("management", this.managementCtx, toPixelSize(1), 40, 6, "#00bcd4", 1);
 
         let isUnlocked = this.game.management.isMenuEditUnlocked;
         let cost = this.game.management.menuEditUnlockValue;
         let canAfford = this.game.playerMoney >= cost;
 
         this.menuEditBtnCtx.clearRect(0, 0, this.menuEditBtn.width, this.menuEditBtn.height);
-        genSmallBox(this.menuEditBtnCtx, 0, 0, 73, 11, toPixelSize(1), "#9bf2fa" + (isUnlocked || canAfford ? "" : "55"), "#1b1116");
+        genSmallBox(this.menuEditBtnCtx, 0, 0, 73, 11, toPixelSize(1), "#9bf2fa" + (isUnlocked || canAfford ? "" : "55"), this.menuClick ? "#ffffff66" : "#1b1116");
         drawPixelTextInCanvas(isUnlocked ? "menu edit" : "menu $-" + cost, this.menuEditBtnCtx, toPixelSize(1), 37, 6, "#9bf2fa" + (isUnlocked || canAfford ? "" : "55"));
 
         isUnlocked = this.game.management.isUnicornHandlingUnlocked;
@@ -106,7 +109,7 @@ export class ManagementUI {
         canAfford = this.game.playerMoney >= cost;
 
         this.unicornBtnCtx.clearRect(0, 0, this.unicornBtn.width, this.unicornBtn.height);
-        genSmallBox(this.unicornBtnCtx, 0, 0, 73, 11, toPixelSize(1), "#9bf2fa" + (isUnlocked || canAfford ? "" : "55"), "#1b1116");
+        genSmallBox(this.unicornBtnCtx, 0, 0, 73, 11, toPixelSize(1), "#9bf2fa" + (isUnlocked || canAfford ? "" : "55"), this.unicornClick ? "#ffffff66" : "#1b1116");
         drawPixelTextInCanvas(isUnlocked ? "unicorn handling" : "unicorn $-" + cost, this.unicornBtnCtx, toPixelSize(1), 37, 6, "#9bf2fa" + (isUnlocked || canAfford ? "" : "55"));
 
         isUnlocked = this.game.management.isStaffUnlocked;
@@ -114,7 +117,7 @@ export class ManagementUI {
         canAfford = this.game.playerMoney >= cost;
 
         this.staffBtnCtx.clearRect(0, 0, this.staffBtn.width, this.staffBtn.height);
-        genSmallBox(this.staffBtnCtx, 0, 0, 73, 11, toPixelSize(1), "#9bf2fa" + (isUnlocked || canAfford ? "" : "55"), "#1b1116");
+        genSmallBox(this.staffBtnCtx, 0, 0, 73, 11, toPixelSize(1), "#9bf2fa" + (isUnlocked || canAfford ? "" : "55"), this.staffClick ? "#ffffff66" : "#1b1116");
         drawPixelTextInCanvas(isUnlocked ? "Staff managing" : "Staff $-" + cost, this.staffBtnCtx, toPixelSize(1), 37, 6, "#9bf2fa" + (isUnlocked || canAfford ? "" : "55"));
     }
 }

@@ -11,23 +11,20 @@ import { Tile } from "./tile";
 
 export class BinTile extends Tile {
     createInteractionBallon() {
+        this.orderClick = false;
         if (!GameVars.game.pause) GameVars.game.board.player.moveToBoardPos(this.boardX - 1, this.boardY);
         if (!this.interactionBallon) {
             GameVars.sound.clickSound();
             this.interactionBallon = createElem(this.gameDiv, "canvas", null, null, toBoardPixelSize(56), toBoardPixelSize(12), null, () => {
+                this.orderClick = true;
                 if (!GameVars.game.pause) {
                     GameVars.sound.clickSound();
                     GameVars.game.board.player.cleanOrder();
                     this.destroyInteractionBallon();
                 }
-            });
-
+            }, () => setTimeout(() => this.orderClick = false, 50));
             this.updateInteractiveBallonPos();
-            const ctx = this.interactionBallon.getContext("2d");
-
-            genSmallBox(ctx, 0, 0, 53, 9, toBoardPixelSize(1), "#000000", "#ffffff");
-            drawPixelTextInCanvas("dispose waste", ctx, toBoardPixelSize(1), 27, 5, "#000000", 1);
-            genSmallBox(ctx, 52, 8, 3, 3, toBoardPixelSize(1), "#000000", "#ffffff");
+            this.interactionBallonCtx = this.interactionBallon.getContext("2d");
         }
     }
 
@@ -54,5 +51,15 @@ export class BinTile extends Tile {
             (this.boardX * GameVars.tileSize) + 4,
             (this.boardY * GameVars.tileSize) + 1
         );
+        this.drawInteractionBallon();
+    }
+
+    drawInteractionBallon() {
+        if (this.interactionBallon) {
+            this.interactionBallonCtx.clearRect(0, 0, this.interactionBallon.width, this.interactionBallon.height);
+            genSmallBox(this.interactionBallonCtx, 0, 0, 53, 9, toBoardPixelSize(1), "#000000", this.orderClick ? "#ffffff66" : "#ffffff");
+            drawPixelTextInCanvas("dispose waste", this.interactionBallonCtx, toBoardPixelSize(1), 27, 5, "#000000", 1);
+            genSmallBox(this.interactionBallonCtx, 52, 8, 3, 3, toBoardPixelSize(1), "#000000", "#ffffff");
+        }
     }
 }

@@ -11,10 +11,16 @@ export class PlusMinusUI {
         this.mainCanv = createElem(parentDiv, "canvas");
         this.mainCanvCtx = this.mainCanv.getContext("2d");
 
-        this.minusBtn = createElem(parentDiv, "canvas", null, null, null, null, null, minusFn);
+        this.minusBtn = createElem(parentDiv, "canvas", null, null, null, null, null, () => {
+            this.minusClick = true;
+            minusFn();
+        }, () => setTimeout(() => this.minusClick = false, 50));
         this.minusCtx = this.minusBtn.getContext("2d");
 
-        this.plusBtn = createElem(parentDiv, "canvas", null, null, null, null, null, plusFn);
+        this.plusBtn = createElem(parentDiv, "canvas", null, null, null, null, null, () => {
+            this.plusClick = true;
+            plusFn();
+        }, () => setTimeout(() => this.plusClick = false, 50));
         this.plusCtx = this.plusBtn.getContext("2d");
     }
 
@@ -38,11 +44,11 @@ export class PlusMinusUI {
         if (cost) drawPixelTextInCanvas("($" + cost + ")", this.mainCanvCtx, toPixelSize(1), 19, 17, "#00bcd4", 1);
 
         const disableMinus = currentValue == minValue;
-        genSmallBox(this.minusCtx, 0, 0, 13, 13, toPixelSize(1), "#9bf2fa" + (disableMinus ? "55" : ""), "#1b1116");
+        genSmallBox(this.minusCtx, 0, 0, 13, 13, toPixelSize(1), "#9bf2fa" + (disableMinus ? "55" : ""), this.minusClick ? "#ffffff66" : "#1b1116");
         drawPixelTextInCanvas("-", this.minusCtx, toPixelSize(1), 7, 7, "#9bf2fa" + (disableMinus ? "55" : ""), 3);
 
         const disablePlus = currentValue == maxValue || (cost && this.game.playerMoney < cost);
-        genSmallBox(this.plusCtx, 0, 0, 13, 13, toPixelSize(1), "#9bf2fa" + (disablePlus ? "55" : ""), "#1b1116");
+        genSmallBox(this.plusCtx, 0, 0, 13, 13, toPixelSize(1), "#9bf2fa" + (disablePlus ? "55" : ""), this.plusClick ? "#ffffff66" : "#1b1116");
         drawPixelTextInCanvas("+", this.plusCtx, toPixelSize(1), 7, 7, "#9bf2fa" + (disablePlus ? "55" : ""), 3);
 
         drawPixelTextInCanvas(currentValue, this.mainCanvCtx, toPixelSize(1), 73, 11, "#00bcd4", 1);
