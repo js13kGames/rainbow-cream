@@ -147,9 +147,9 @@ export class IceCreamWorker {
     onReachConeMachine() {
         if (!this.hasCone) {
             const coneMachine = this.board.coneMachines[0];
-            if (coneMachine.flourAmount >= 10) {
+            if (coneMachine.flourAmount >= coneMachine.consumption) {
                 this.hasCone = true;
-                coneMachine.flourAmount = clamp(coneMachine.flourAmount - 10, 0, 100);
+                coneMachine.flourAmount = clamp(coneMachine.flourAmount - coneMachine.consumption, 0, 100);
                 this.setTargetIceCreamMachine(0);
             }
         }
@@ -167,9 +167,9 @@ export class IceCreamWorker {
         const targetColor = customer.flavoursColors[this.targetIceCreamMachineIndex];
         const iceCreamMachine = this.board.iceCreamMachines[targetColor];
 
-        if (iceCreamMachine.iceCreamAmount > 10 && this.iceCreamColors.length < 3) {
+        if (iceCreamMachine.iceCreamAmount >= iceCreamMachine.consumption && this.iceCreamColors.length < 3) {
             this.iceCreamColors.push(targetColor);
-            iceCreamMachine.iceCreamAmount = clamp(iceCreamMachine.iceCreamAmount - 10, 0, 100);
+            iceCreamMachine.iceCreamAmount = clamp(iceCreamMachine.iceCreamAmount - iceCreamMachine.consumption, 0, 100);
 
             this.targetIceCreamMachineIndex++;
             if (this.targetIceCreamMachineIndex < customer.flavoursColors.length) {

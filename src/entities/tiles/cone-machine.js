@@ -14,6 +14,7 @@ import { Tile } from "./tile";
 export class ConeMachine extends Tile {
     constructor(boardX, boardY, ctx) {
         super(boardX, boardY, ctx);
+        this.consumption = 10;
         this.flourAmount = 100;
     }
 
@@ -45,9 +46,9 @@ export class ConeMachine extends Tile {
             this.takeCone = createElem(this.gameDiv, "canvas", null, null, toBoardPixelSize(44), toBoardPixelSize(12), null, () => {
                 this.takeConeClick = true;
                 if (!GameVars.game.pause) {
-                    if (!player.hasCone && this.flourAmount >= 10) {
+                    if (!player.hasCone && this.flourAmount >= this.consumption) {
                         GameVars.sound.clickSound();
-                        this.flourAmount = clamp(this.flourAmount - 10, 0, 100);
+                        this.flourAmount = clamp(this.flourAmount - this.consumption, 0, 100);
                         player.collectCone();
                         this.destroyInteractionBallon();
                         if (GameVars.game.isTutorial) {

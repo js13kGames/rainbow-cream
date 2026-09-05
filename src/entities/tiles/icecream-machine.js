@@ -14,6 +14,7 @@ import { Tile } from "./tile";
 export class IceCreamMachine extends Tile {
     constructor(boardX, boardY, ctx) {
         super(boardX, boardY, ctx);
+        this.consumption = 8;
         this.feedAmount = 100;
         this.iceCreamAmount = 100;
         this.productionTimer = 0;
@@ -51,9 +52,9 @@ export class IceCreamMachine extends Tile {
             this.takeIcecreamCanv = createElem(this.gameDiv, "canvas", null, null, toBoardPixelSize(56), toBoardPixelSize(12), null, () => {
                 this.takeIcecreamClick = true;
                 if (!GameVars.game.pause) {
-                    if (player.hasCone && this.iceCreamAmount > 10 && player.iceCreamColors.length < 3) {
+                    if (player.hasCone && this.iceCreamAmount >= this.consumption && player.iceCreamColors.length < 3) {
                         GameVars.sound.clickSound();
-                        this.iceCreamAmount = clamp(this.iceCreamAmount - 10, 0, 100);
+                        this.iceCreamAmount = clamp(this.iceCreamAmount - this.consumption, 0, 100);
                         player.collectIceCream(this.iceCreamColor);
                         if (GameVars.game.isTutorial) {
                             this.destroyInteractionBallon();
