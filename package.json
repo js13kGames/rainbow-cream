@@ -1,0 +1,21 @@
+{
+  "name": "rainbow-cream",
+  "version": "1.0.0",
+  "description": "A management game where you manage a unicorn icecream shop",
+  "license": "UNLICENSED",
+  "author": "Igor Estevao",
+  "scripts": {
+    "start": "webpack serve --open",
+    "build": "npx webpack --config webpack.config.js",
+    "compress": "npx roadroller ./dist/main.js -o ./dist/main.js"
+  },
+  "devDependencies": {
+    "terser-webpack-plugin": "^5.3.9",
+    "webpack": "^5.50.0",
+    "webpack-cli": "^4.7.2",
+    "webpack-dev-server": "^4.1.0"
+  },
+  "dependencies": {
+    "roadroller": "^2.1.0"
+  }
+}
