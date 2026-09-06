@@ -95,6 +95,7 @@ const startGame = () => {
     gameBoardDiv.onmousedown = (e) => game.click(e.clientX, e.clientY);
     gameBoardDiv.ontouchstart = (e) => game.click(e.touches[0].clientX, e.touches[0].clientY);
 
+    isNewHighScore = false;
     game.init(gameBoardDiv);
 }
 
@@ -236,6 +237,7 @@ const gameLoop = (timeStamp) => {
     GameVars.deltaTime = Math.min(secondsPassed, 0.1);
 
     if (GameVars.deltaTime && !game.isGameOver) {
+        updateHighScore();
         game.update();
         game.draw();
         handleGameOverScreen();
@@ -247,7 +249,6 @@ const gameLoop = (timeStamp) => {
 const handleGameOverScreen = () => {
     if (game.isGameOver && !isShowingFinishMenu) {
         isShowingFinishMenu = true;
-        updateHighScore();
         gameOverDiv.classList.remove("hidden");
         drawGameOverMenu();
         timeoutID = setTimeout(() => {
@@ -262,7 +263,6 @@ const handleGameOverScreen = () => {
 }
 
 const updateHighScore = () => {
-    isNewHighScore = false;
     if (game.score > GameVars.highScore) {
         localStorage.setItem(GameVars.storeId, game.score);
         GameVars.highScore = game.score;
