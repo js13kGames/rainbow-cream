@@ -75,13 +75,15 @@ export class Customer {
     }
 
     update() {
-        this.productionTimer += GameVars.deltaTime;
-        if (this.productionTimer >= 1) {
-            this.productionTimer -= 1;
-            this.patienceLevel = clamp(this.patienceLevel - this.patienceReduction, 0, 100);
-            if (this.patienceLevel == 0) {
-                GameVars.game.updateReputation(this);
-                this.moveToBoardPos(10, 15);
+        if (!this.isOrderCompleted) {
+            this.productionTimer += GameVars.deltaTime;
+            if (this.productionTimer >= 1) {
+                this.productionTimer -= 1;
+                this.patienceLevel = clamp(this.patienceLevel - this.patienceReduction, 0, 100);
+                if (this.patienceLevel == 0) {
+                    GameVars.game.updateReputation(this);
+                    this.moveToBoardPos(10, 15);
+                }
             }
         }
 
