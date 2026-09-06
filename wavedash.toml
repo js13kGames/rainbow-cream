@@ -1,0 +1,4 @@
+game_id = "j974jnrjs1r4tgkzd55xm8hgmd8dx28v"
+upload_dir = "dist"
+
+entrypoint = "index.html"
