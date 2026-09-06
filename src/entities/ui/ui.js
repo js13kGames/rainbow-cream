@@ -133,7 +133,7 @@ export class UI {
         this.financesCtx.fillRect(
             Math.round((50 * toPixelSize(1)) + toPixelSize(1)),
             Math.round((22 * toPixelSize(1)) + toPixelSize(1)),
-            Math.round((clamp((20 * this.game.reputation) / 100, 0, 20) * toPixelSize(1)) - toPixelSize(1)),
+            Math.round((clamp((20 * this.game.reputation) / 100, 0, 19) * toPixelSize(1)) - toPixelSize(1)),
             Math.round((5 * toPixelSize(1)) - toPixelSize(1))
         );
         drawPixelTextInCanvas(GameVars.game.calculateGoodReviewRatio(GameVars.game.management.iceCreamPrice), this.financesCtx, toPixelSize(1), 74, 25, "#00bcd4", 1);
