@@ -35,6 +35,10 @@ let oldTimeStamp = 0;
 const init = () => {
     GameVars.updatePixelSize(window.innerWidth, window.innerHeight);
 
+    if (typeof Wavedash !== 'undefined') {
+        Wavedash.init();
+    }
+
     createMainMenu();
 
     game = new Game();
