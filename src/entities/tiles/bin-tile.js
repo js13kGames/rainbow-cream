@@ -56,7 +56,7 @@ export class BinTile extends Tile {
     drawInteractionBallon() {
         if (this.interactionBallon) {
             this.interactionBallonCtx.clearRect(0, 0, this.interactionBallon.width, this.interactionBallon.height);
-            genSmallBox(this.interactionBallonCtx, 0, 0, 53, 9, toBoardPixelSize(1), "#000000", this.orderClick ? "#ffffff66" : "#ffffff");
+            genSmallBox(this.interactionBallonCtx, 0, 0, 53, 9, toBoardPixelSize(1), "#000000", this.orderClick ? "#00bcd4" : "#ffffff");
             drawPixelTextInCanvas("dispose waste", this.interactionBallonCtx, toBoardPixelSize(1), 27, 5, "#000000", 1);
             genSmallBox(this.interactionBallonCtx, 52, 8, 3, 3, toBoardPixelSize(1), "#000000", "#ffffff");
         }

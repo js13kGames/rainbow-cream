@@ -118,11 +118,11 @@ export class ConeMachine extends Tile {
     drawInteractionBallon() {
         if (this.takeCone) {
             this.buyFlourCtx.clearRect(0, 0, this.buyFlour.width, this.buyFlour.height);
-            genSmallBox(this.buyFlourCtx, 0, 0, 60, 9, toBoardPixelSize(1), "#000000", this.buyFlourClick ? "#ffffff66" : "#ffffff");
+            genSmallBox(this.buyFlourCtx, 0, 0, 60, 9, toBoardPixelSize(1), "#000000", this.buyFlourClick ? "#00bcd4" : "#ffffff");
             drawPixelTextInCanvas("add flour $-" + this.flourPrice(), this.buyFlourCtx, toBoardPixelSize(1), 31, 5, "#000000", 1);
 
             this.takeConeCtx.clearRect(0, 0, this.takeCone.width, this.takeCone.height);
-            genSmallBox(this.takeConeCtx, 0, 0, 41, 9, toBoardPixelSize(1), "#000000", this.takeConeClick ? "#ffffff66" : "#ffffff");
+            genSmallBox(this.takeConeCtx, 0, 0, 41, 9, toBoardPixelSize(1), "#000000", this.takeConeClick ? "#00bcd4" : "#ffffff");
             drawPixelTextInCanvas("take cone", this.takeConeCtx, toBoardPixelSize(1), 21, 5, "#000000", 1);
             genSmallBox(this.takeConeCtx, 40, 8, 3, 3, toBoardPixelSize(1), "#000000", "#ffffff");
         }

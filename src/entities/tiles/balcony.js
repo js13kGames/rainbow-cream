@@ -167,7 +167,7 @@ export class Balcony extends Tile {
     drawInteractionBallon() {
         if (this.interactionBallon) {
             this.interactionBallonCtx.clearRect(0, 0, this.interactionBallon.width, this.interactionBallon.height);
-            genSmallBox(this.interactionBallonCtx, 0, 0, 61, 16, toBoardPixelSize(1), "#000000", this.orderClick ? "#ffffff66" : "#ffffff");
+            genSmallBox(this.interactionBallonCtx, 0, 0, 61, 16, toBoardPixelSize(1), "#000000", this.orderClick ? "#00bcd4" : "#ffffff");
             const iceCreamPriceWithTip = GameVars.game.getIceCreamCost(this.customer);
             const iceCreamTip = iceCreamPriceWithTip - GameVars.game.management.iceCreamPrice;
             drawPixelTextInCanvas("complete $" + GameVars.game.getIceCreamCost(this.customer), this.interactionBallonCtx, toBoardPixelSize(1), 31, 5, "#000000", 1);

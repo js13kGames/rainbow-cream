@@ -88,7 +88,7 @@ export class CashierMachine extends Tile {
     drawInteractionBallon() {
         if (this.interactionBallon) {
             this.interactionBallonCtx.clearRect(0, 0, this.interactionBallon.width, this.interactionBallon.height);
-            genSmallBox(this.interactionBallonCtx, 0, 0, 41, 9, toBoardPixelSize(1), "#000000", this.orderClick ? "#ffffff66" : "#ffffff");
+            genSmallBox(this.interactionBallonCtx, 0, 0, 41, 9, toBoardPixelSize(1), "#000000", this.orderClick ? "#00bcd4" : "#ffffff");
             drawPixelTextInCanvas("take order", this.interactionBallonCtx, toBoardPixelSize(1), 21, 5, "#000000", 1);
             genSmallBox(this.interactionBallonCtx, 40, 8, 3, 3, toBoardPixelSize(1), "#000000", "#ffffff");
         }

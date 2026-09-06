@@ -165,11 +165,11 @@ export class IceCreamMachine extends Tile {
     drawInteractionBallon() {
         if (this.takeIcecreamCanv) {
             this.feedGrainCtx.clearRect(0, 0, this.feedGrainCanv.width, this.feedGrainCanv.height);
-            genSmallBox(this.feedGrainCtx, 0, 0, 60, 9, toBoardPixelSize(1), "#000000", this.feedGrainClick ? "#ffffff66" : "#ffffff");
+            genSmallBox(this.feedGrainCtx, 0, 0, 60, 9, toBoardPixelSize(1), "#000000", this.feedGrainClick ? "#00bcd4" : "#ffffff");
             drawPixelTextInCanvas("feed grain $-" + this.grainPrice(), this.feedGrainCtx, toBoardPixelSize(1), 30, 5, "#000000", 1);
 
             this.takeIcecreamCtx.clearRect(0, 0, this.takeIcecreamCanv.width, this.takeIcecreamCanv.height);
-            genSmallBox(this.takeIcecreamCtx, 0, 0, 53, 9, toBoardPixelSize(1), "#000000", this.takeIcecreamClick ? "#ffffff66" : "#ffffff");
+            genSmallBox(this.takeIcecreamCtx, 0, 0, 53, 9, toBoardPixelSize(1), "#000000", this.takeIcecreamClick ? "#00bcd4" : "#ffffff");
             drawPixelTextInCanvas("take icecream", this.takeIcecreamCtx, toBoardPixelSize(1), 27, 5, "#000000", 1);
             genSmallBox(this.takeIcecreamCtx, 52, 8, 3, 3, toBoardPixelSize(1), "#000000", "#ffffff");
         }
