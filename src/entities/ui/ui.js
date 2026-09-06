@@ -11,9 +11,9 @@ export class UI {
         this.game = game;
         this.uiDiv = createElem(document.getElementById("game"), "div", "ui");
         this.managementUI = new ManagementUI(this.game, this.uiDiv);
-        this.createPauseBtn();
         this.createFinances();
         this.createBoardControlBtns();
+        this.createPauseBtn();
         this.resize();
     }
 
