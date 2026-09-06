@@ -233,8 +233,9 @@ export class Board {
     }
 
     dragElement(board) {
-        let clientX = 0, clientY = 0;
-        let newX = 0, newY = 0, startX = 0, startY = 0;
+        let pressX = 0, pressY = 0;
+        let originX = 0, originY = 0;
+        let dragging = false;
 
         board.boardCanvas.onmousedown = dragMouseDown;
         board.boardCanvas.ontouchstart = dragMouseDown;
@@ -244,12 +245,15 @@ export class Board {
             e = e || window.event;
             e.preventDefault();
             if (e.touches && e.touches.length > 0) {
-                startX = e.touches[0].clientX;
-                startY = e.touches[0].clientY;
+                pressX = e.touches[0].clientX;
+                pressY = e.touches[0].clientY;
             } else {
-                startX = e.clientX;
-                startY = e.clientY;
+                pressX = e.clientX;
+                pressY = e.clientY;
             }
+
+            originX = board.x;
+            originY = board.y;
 
             board.boardCanvas.onmouseup = closeDragElem;
             board.boardCanvas.onmousemove = elemDrag;
@@ -261,21 +265,23 @@ export class Board {
         function elemDrag(e) {
             e = e || window.event;
             e.preventDefault();
+            let pointerX, pointerY;
             if (e.touches && e.touches.length > 0) {
-                clientX = e.touches[0].clientX;
-                clientY = e.touches[0].clientY;
+                pointerX = e.touches[0].clientX;
+                pointerY = e.touches[0].clientY;
             } else {
-                clientX = e.clientX;
-                clientY = e.clientY;
+                pointerX = e.clientX;
+                pointerY = e.clientY;
             }
-            newX = startX - clientX;
-            newY = startY - clientY;
-            startX = clientX;
-            startY = clientY;
-            board.updateBoardPos(board.x - newX, board.y - newY);
+            const deltaX = pressX - pointerX;
+            const deltaY = pressY - pointerY;
+            if (!dragging && Math.hypot(deltaX, deltaY) < GameVars.dragThreshold) return;
+            dragging = true;
+            board.updateBoardPos(originX - deltaX, originY - deltaY);
         }
 
         function closeDragElem(e) {
+            dragging = false;
             board.boardCanvas.onmouseup = null;
             board.boardCanvas.onmousemove = null;
 

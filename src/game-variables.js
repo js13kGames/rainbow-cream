@@ -44,6 +44,8 @@ let gameH;
 let pixelSize;
 let boardPixelSize;
 
+let dragThreshold = 5;
+
 let gameWdAsPixels;
 let gameHgAsPixels;
 
@@ -67,6 +69,7 @@ export const GameVars = {
 
     pixelSize,
     boardPixelSize,
+    dragThreshold,
     gameWdAsPixels,
     gameHgAsPixels,
 
