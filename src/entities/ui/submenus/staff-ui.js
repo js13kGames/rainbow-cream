@@ -64,7 +64,7 @@ export class StaffUI {
             () => {
                 const numberOfSupplyWorkers = this.game.board.supplyWorkers.length;
                 const supplyWorkerCost = this.game.management.supplyWorkerCost(numberOfSupplyWorkers);
-                if (numberOfSupplyWorkers < this.game.board.coneMachines.length && this.game.playerMoney >= supplyWorkerCost) {
+                if (numberOfSupplyWorkers < this.game.board.balconies.length && this.game.playerMoney >= supplyWorkerCost) {
                     this.game.pay(supplyWorkerCost);
                     this.game.board.supplyWorkers.push(new SupplyWorker());
                 } else {
@@ -135,7 +135,7 @@ export class StaffUI {
             this.game.management.cashierWorkerCost(this.game.board.cashierWorkers.length));
 
         this.hireSupplyWorkerUI.draw(this.xPos, this.yPos + toPixelSize(53),
-            this.game.board.supplyWorkers.length, 0, this.game.board.coneMachines.length,
+            this.game.board.supplyWorkers.length, 0, this.game.board.balconies.length,
             this.game.management.supplyWorkerCost(this.game.board.supplyWorkers.length));
 
         this.speedUpgradeUI.draw(this.xPos, this.yPos + toPixelSize(74),

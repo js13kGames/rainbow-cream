@@ -72,7 +72,7 @@ export class SupplyWorker {
         }
 
         this.delayTimer += GameVars.deltaTime;
-        const staffSpeed = GameVars.game.management.getStaffSpeed() + 3;
+        const staffSpeed = 3 * GameVars.game.management.getStaffSpeed();
         if (this.delayTimer >= staffSpeed) {
             this.delayTimer -= staffSpeed;
             switch (this.state) {
@@ -87,21 +87,36 @@ export class SupplyWorker {
         this.currentTargetTile = null;
         let lowestValue = Number.MAX_SAFE_INTEGER;
         this.board.coneMachines.forEach(c => {
-            if (this.currentTargetTile == null || (c.flourAmount < 100 && c.flourAmount < lowestValue)) {
-                lowestValue = c.flourAmount;
-                this.currentTargetTile = c;
-                this.state = EmployeeState.TO_CONE_MACHINE;
+            if (!this.isAlreadyBeingRefield(c)) {
+                if (this.currentTargetTile == null || (c.flourAmount < 100 && c.flourAmount < lowestValue)) {
+                    lowestValue = c.flourAmount;
+                    this.currentTargetTile = c;
+                    this.state = EmployeeState.TO_CONE_MACHINE;
+                }
             }
         });
         for (let key in this.board.iceCreamMachines) {
             const iceCreamMachine = this.board.iceCreamMachines[key];
-            if (this.currentTargetTile == null || (iceCreamMachine.feedAmount < 100 && iceCreamMachine.feedAmount < lowestValue)) {
-                lowestValue = iceCreamMachine.feedAmount;
-                this.currentTargetTile = iceCreamMachine;
-                this.state = EmployeeState.TO_ICE_CREAM_MACHINE;
+            if (!this.isAlreadyBeingRefield(iceCreamMachine)) {
+                if (this.currentTargetTile == null || (iceCreamMachine.feedAmount < 100 && iceCreamMachine.feedAmount < lowestValue)) {
+                    lowestValue = iceCreamMachine.feedAmount;
+                    this.currentTargetTile = iceCreamMachine;
+                    this.state = EmployeeState.TO_ICE_CREAM_MACHINE;
+                }
             }
         }
         this.moveToBoardPos(this.currentTargetTile.boardX, this.currentTargetTile.boardY + 1);
+    }
+
+    isAlreadyBeingRefield(machine) {
+        for (let i = 0; i < this.board.supplyWorkers.length; i++) {
+            const worker = this.board.supplyWorkers[i];
+            if (worker == this) continue;
+            if (worker.currentTargetTile && worker.currentTargetTile === machine) {
+                return true;
+            }
+        }
+        return false;
     }
 
     checkArrival() {
