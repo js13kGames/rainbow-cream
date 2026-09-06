@@ -275,7 +275,7 @@ export class Board {
             }
             const deltaX = pressX - pointerX;
             const deltaY = pressY - pointerY;
-            if (!dragging && Math.hypot(deltaX, deltaY) < GameVars.dragThreshold) return;
+            if (!dragging && Math.hypot(deltaX, deltaY) < toBoardPixelSize(GameVars.dragThreshold)) return;
             dragging = true;
             board.updateBoardPos(originX - deltaX, originY - deltaY);
         }
