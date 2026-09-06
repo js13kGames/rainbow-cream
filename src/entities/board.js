@@ -50,10 +50,10 @@ export class Board {
 
     createBackground() {
         this.backgroundCanvas = createElem(this.gameDiv, "canvas", "board-background", null,
-            toBoardPixelSize(GameVars.gameWdAsPixels), toBoardPixelSize(GameVars.gameHgAsPixels), "#2f492c");
+            toBoardPixelSize(GameVars.gameWdAsPixels), toBoardPixelSize(GameVars.gameHgAsPixels), "#2d2c49");
         const lines = [];
         for (let i = 0; i < GameVars.gameHgAsPixels / 12; i++) {
-            createPixelLine(0, 16 * i + 2, GameVars.gameWdAsPixels, 16 * i + 2, "#21341f", toBoardPixelSize(1), lines);
+            createPixelLine(0, 16 * i + 2, GameVars.gameWdAsPixels, 16 * i + 2, "#201f34", toBoardPixelSize(1), lines);
         }
         const ctx = this.backgroundCanvas.getContext("2d");
         lines.forEach(line => line.draw(ctx));
@@ -168,7 +168,7 @@ export class Board {
         const ctx = this.backgroundCanvas.getContext("2d");
         const lines = [];
         for (let i = 0; i < GameVars.gameHgAsPixels / 12; i++) {
-            createPixelLine(0, 16 * i + 2, GameVars.gameWdAsPixels, 16 * i + 2, "#21341f", toBoardPixelSize(1), lines);
+            createPixelLine(0, 16 * i + 2, GameVars.gameWdAsPixels, 16 * i + 2, "#201f34", toBoardPixelSize(1), lines);
         }
         lines.forEach(line => line.draw(ctx));
         this.drawGameBoardShadow();
