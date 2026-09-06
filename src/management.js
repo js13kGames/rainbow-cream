@@ -33,6 +33,7 @@ export class Management {
 
     unlockMenuEdit() {
         if (!this.isMenuEditUnlocked && GameVars.game.playerMoney >= this.menuEditUnlockValue) {
+            GameVars.sound.clickSound();
             GameVars.game.pay(this.menuEditUnlockValue);
             this.isMenuEditUnlocked = true;
         } else {
@@ -61,6 +62,7 @@ export class Management {
 
     unlockUnicornHandling() {
         if (!this.isUnicornHandlingUnlocked && GameVars.game.playerMoney >= this.unicornHandlingUnlockedValue) {
+            GameVars.sound.clickSound();
             GameVars.game.pay(this.unicornHandlingUnlockedValue);
             this.isUnicornHandlingUnlocked = true;
         } else {
@@ -86,6 +88,7 @@ export class Management {
 
     unlockStaff() {
         if (!this.isStaffUnlocked && GameVars.game.playerMoney >= this.staffUnlockValue) {
+            GameVars.sound.clickSound();
             GameVars.game.pay(this.staffUnlockValue);
             this.isStaffUnlocked = true;
         } else {

@@ -17,7 +17,10 @@ export class StaffUI {
         this.staffCanv = createElem(this.staffDiv, "canvas");
         this.staffCtx = this.staffCanv.getContext("2d");
 
-        this.closeCanv = createElem(this.staffDiv, "canvas", null, null, null, null, null, () => this.hide());
+        this.closeCanv = createElem(this.staffDiv, "canvas", null, null, null, null, null, () => {
+            GameVars.sound.clickSound();
+            this.hide();
+        });
         this.closeCtx = this.closeCanv.getContext("2d");
 
         this.hireIceCreamWorkerUI = new PlusMinusUI(game, this.staffDiv, "icecream workers", " ",
@@ -25,6 +28,7 @@ export class StaffUI {
                 const numberOfIceCreamWorker = this.game.board.iceCreamWorkers.length;
                 const iceCreamWorkerCost = this.game.management.iceCreamWorkerCost(numberOfIceCreamWorker);
                 if (numberOfIceCreamWorker < this.game.board.balconies.length && this.game.playerMoney >= iceCreamWorkerCost) {
+                    GameVars.sound.clickSound();
                     this.game.pay(iceCreamWorkerCost);
                     this.game.board.iceCreamWorkers.push(new IceCreamWorker());
                 } else {
@@ -33,6 +37,7 @@ export class StaffUI {
             },
             () => {
                 if (this.game.board.iceCreamWorkers.length > 0) {
+                    GameVars.sound.clickSound();
                     this.game.board.iceCreamWorkers.pop();
                 } else {
                     GameVars.sound.wrongSound();
@@ -45,6 +50,7 @@ export class StaffUI {
                 const numberOfCashierWorkers = this.game.board.cashierWorkers.length;
                 const cashierWorkerCost = this.game.management.cashierWorkerCost(numberOfCashierWorkers);
                 if (numberOfCashierWorkers < this.game.board.cashiers.length && this.game.playerMoney >= cashierWorkerCost) {
+                    GameVars.sound.clickSound();
                     this.game.pay(cashierWorkerCost);
                     this.game.board.cashierWorkers.push(new CashierWorker());
                 } else {
@@ -53,6 +59,7 @@ export class StaffUI {
             },
             () => {
                 if (this.game.board.cashierWorkers.length > 0) {
+                    GameVars.sound.clickSound();
                     this.game.board.cashierWorkers.pop();
                 } else {
                     GameVars.sound.wrongSound();
@@ -65,6 +72,7 @@ export class StaffUI {
                 const numberOfSupplyWorkers = this.game.board.supplyWorkers.length;
                 const supplyWorkerCost = this.game.management.supplyWorkerCost(numberOfSupplyWorkers);
                 if (numberOfSupplyWorkers < this.game.board.balconies.length && this.game.playerMoney >= supplyWorkerCost) {
+                    GameVars.sound.clickSound();
                     this.game.pay(supplyWorkerCost);
                     this.game.board.supplyWorkers.push(new SupplyWorker());
                 } else {
@@ -73,6 +81,7 @@ export class StaffUI {
             },
             () => {
                 if (this.game.board.supplyWorkers.length > 0) {
+                    GameVars.sound.clickSound();
                     this.game.board.supplyWorkers.pop();
                 } else {
                     GameVars.sound.wrongSound();
@@ -84,6 +93,7 @@ export class StaffUI {
             () => {
                 const speedUpgradeCost = this.game.management.speedUpgradeCost();
                 if (this.game.playerMoney >= speedUpgradeCost) {
+                    GameVars.sound.clickSound();
                     this.game.pay(speedUpgradeCost);
                     this.game.management.staffSpeedLvl++;
                 } else {
@@ -91,6 +101,7 @@ export class StaffUI {
                 }
             },
             () => {
+                GameVars.sound.clickSound();
                 this.game.management.staffSpeedLvl = clamp(this.game.management.staffSpeedLvl - 1, 0, Number.MAX_SAFE_INTEGER);
             }
         );

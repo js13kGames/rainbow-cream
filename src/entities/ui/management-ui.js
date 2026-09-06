@@ -19,6 +19,7 @@ export class ManagementUI {
 
         this.menuEditMenu = new MenuEditUI(game, this.managementDiv);
         this.menuEditBtn = createElem(this.managementDiv, "canvas", null, null, null, null, null, () => {
+            GameVars.sound.clickSound();
             this.menuClick = true;
             if (this.game.management.isMenuEditUnlocked) {
                 this.openMenu(MenuType.MENU_EDIT);
@@ -30,6 +31,7 @@ export class ManagementUI {
 
         this.unicornMenu = new UnicornHandlingUI(game, this.managementDiv);
         this.unicornBtn = createElem(this.managementDiv, "canvas", null, null, null, null, null, () => {
+            GameVars.sound.clickSound();
             this.unicornClick = true;
             if (this.game.management.isUnicornHandlingUnlocked) {
                 this.openMenu(MenuType.UNICORN_HANDLING);
@@ -41,6 +43,7 @@ export class ManagementUI {
 
         this.staffMenu = new StaffUI(game, this.managementDiv);
         this.staffBtn = createElem(this.managementDiv, "canvas", null, null, null, null, null, () => {
+            GameVars.sound.clickSound();
             this.staffClick = true;
             if (this.game.management.isStaffUnlocked) {
                 this.openMenu(MenuType.STAFF);

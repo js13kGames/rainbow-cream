@@ -100,6 +100,7 @@ const startGame = () => {
 
 const toogleSound = () => {
     initAudio();
+    GameVars.sound.clickSound();
     GameVars.sound?.muteMusic();
 }
 

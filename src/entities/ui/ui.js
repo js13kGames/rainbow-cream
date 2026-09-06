@@ -22,6 +22,7 @@ export class UI {
         this.pauseCanvCtx = this.pauseCanv.getContext("2d");
 
         this.pauseBtnCanv = createElem(this.uiDiv, "canvas", null, null, null, null, null, () => {
+            GameVars.sound.clickSound();
             this.pauseClick = true;
             this.game.pause = !this.game.pause;
         }, () => setTimeout(() => this.pauseClick = false, 50));
@@ -55,6 +56,7 @@ export class UI {
         this.zoomMinusCtx = this.zoomMinus.getContext("2d");
 
         this.resetLevelBtn = createElem(this.uiDiv, "canvas", null, null, null, null, null, () => {
+            GameVars.sound.clickSound();
             this.resetClick = true;
             this.game.board.resetBoardPos();
         }, () => setTimeout(() => this.resetClick = false, 50));

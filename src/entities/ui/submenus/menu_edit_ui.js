@@ -15,22 +15,28 @@ export class MenuEditUI {
         this.menuCanv = createElem(this.menuDiv, "canvas");
         this.menuCtx = this.menuCanv.getContext("2d");
 
-        this.closeCanv = createElem(this.menuDiv, "canvas", null, null, null, null, null, () => this.hide());
+        this.closeCanv = createElem(this.menuDiv, "canvas", null, null, null, null, null, () => {
+            GameVars.sound.clickSound();
+            this.hide();
+        });
         this.closeCtx = this.closeCanv.getContext("2d");
 
         this.blueActiveBtn = createElem(this.menuDiv, "canvas", null, null, null, null, null, () => {
+            GameVars.sound.clickSound();
             this.blueClick = true;
             this.game.management.isBlueActive = !this.game.management.isBlueActive;
         }, () => setTimeout(() => this.blueClick = false, 50));
         this.blueActiveCtx = this.blueActiveBtn.getContext("2d");
 
         this.yellowActiveBtn = createElem(this.menuDiv, "canvas", null, null, null, null, null, () => {
+            GameVars.sound.clickSound();
             this.yellowClick = true;
             this.game.management.isYellowActive = !this.game.management.isYellowActive;
         }, () => setTimeout(() => this.yellowClick = false, 50));
         this.yellowActiveCtx = this.yellowActiveBtn.getContext("2d");
 
         this.redActiveBtn = createElem(this.menuDiv, "canvas", null, null, null, null, null, () => {
+            GameVars.sound.clickSound();
             this.redClick = true;
             this.game.management.isRedActive = !this.game.management.isRedActive;
         }, () => setTimeout(() => this.redClick = false, 50));
@@ -38,18 +44,22 @@ export class MenuEditUI {
 
         this.numberOfFlavours = new PlusMinusUI(game, this.menuDiv, "max flavours", " ",
             () => {
+                GameVars.sound.clickSound();
                 this.game.management.maxFlavourAmount = clamp(this.game.management.maxFlavourAmount + 1, 1, 3);
             },
             () => {
+                GameVars.sound.clickSound();
                 this.game.management.maxFlavourAmount = clamp(this.game.management.maxFlavourAmount - 1, 1, 3);
             }
         );
 
         this.iceCreamPrice = new PlusMinusUI(game, this.menuDiv, "icecream|price", "|",
             () => {
+                GameVars.sound.clickSound();
                 this.game.management.iceCreamPrice = Math.min(this.game.management.iceCreamPrice + 10, this.game.management.getMaxIceCreamPrice());
             },
             () => {
+                GameVars.sound.clickSound();
                 this.game.management.iceCreamPrice = clamp(this.game.management.iceCreamPrice - 10, 1, Number.MAX_SAFE_INTEGER);
             }
         );

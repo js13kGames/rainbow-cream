@@ -18,13 +18,17 @@ export class UnicornHandlingUI {
         this.unicornCanv = createElem(this.unicornDiv, "canvas");
         this.unicornCtx = this.unicornCanv.getContext("2d");
 
-        this.closeCanv = createElem(this.unicornDiv, "canvas", null, null, null, null, null, () => this.hide());
+        this.closeCanv = createElem(this.unicornDiv, "canvas", null, null, null, null, null, () => {
+            GameVars.sound.clickSound();
+            this.hide();
+        });
         this.closeCtx = this.closeCanv.getContext("2d");
 
         this.blueProductionUI = new PlusMinusUI(game, this.unicornDiv, "blue production", " ",
             () => {
                 const productionUpgradeCost = this.game.management.unicornProductionSpeedUpgradeCost(ColorType.BLUE);
                 if (this.game.playerMoney >= productionUpgradeCost) {
+                    GameVars.sound.clickSound();
                     this.game.pay(productionUpgradeCost);
                     this.game.management.blueUnicornProductionSpeedLvl++;
                 } else {
@@ -32,6 +36,7 @@ export class UnicornHandlingUI {
                 }
             },
             () => {
+                GameVars.sound.clickSound();
                 this.game.management.blueUnicornProductionSpeedLvl = clamp(this.game.management.blueUnicornProductionSpeedLvl - 1, 0, Number.MAX_SAFE_INTEGER);
             }
         );
@@ -40,6 +45,7 @@ export class UnicornHandlingUI {
             () => {
                 const productionUpgradeCost = this.game.management.unicornProductionSpeedUpgradeCost(ColorType.YELLOW);
                 if (this.game.playerMoney >= productionUpgradeCost) {
+                    GameVars.sound.clickSound();
                     this.game.pay(productionUpgradeCost);
                     this.game.management.yellowUnicornProductionSpeedLvl++;
                 } else {
@@ -47,6 +53,7 @@ export class UnicornHandlingUI {
                 }
             },
             () => {
+                GameVars.sound.clickSound();
                 this.game.management.yellowUnicornProductionSpeedLvl = clamp(this.game.management.yellowUnicornProductionSpeedLvl - 1, 0, Number.MAX_SAFE_INTEGER);
             }
         );
@@ -55,6 +62,7 @@ export class UnicornHandlingUI {
             () => {
                 const productionUpgradeCost = this.game.management.unicornProductionSpeedUpgradeCost(ColorType.RED);
                 if (this.game.playerMoney >= productionUpgradeCost) {
+                    GameVars.sound.clickSound();
                     this.game.pay(productionUpgradeCost);
                     this.game.management.redUnicornProductionSpeedLvl++;
                 } else {
@@ -62,6 +70,7 @@ export class UnicornHandlingUI {
                 }
             },
             () => {
+                GameVars.sound.clickSound();
                 this.game.management.redUnicornProductionSpeedLvl = clamp(this.game.management.redUnicornProductionSpeedLvl - 1, 0, Number.MAX_SAFE_INTEGER);
             }
         );
