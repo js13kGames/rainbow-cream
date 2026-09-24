@@ -1,4 +1,8 @@
 ---
+genres:
+  - management
+  - simulation
+  - casual
 video: https://youtu.be/rZ2rqaAiOpw
 # See github.com/js13kGames/hello-world for supported frontmatter
 ---
